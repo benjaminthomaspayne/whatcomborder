@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WA-BC Border Wait Times</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen p-4">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                        Washington-BC Border Wait Times
+                    </h1>
+                    <p class="text-gray-600">Real-time crossing information for Pacific Northwest border crossings</p>
+                </div>
+                <button onclick="fetchData()" id="refreshBtn" class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                    <svg id="refreshIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    Refresh
+                </button>
+            </div>
+            
+            <div id="lastUpdate" class="flex items-center gap-2 text-sm text-gray-500 hidden">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Last updated: <span id="updateTime"></span>
+            </div>
+
+            <div id="errorMessage" class="hidden mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p class="text-red-800 font-semibold">Error loading data</p>
+                <p class="text-red-600 text-sm mt-1" id="errorText"></p>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="bg-white rounded-xl shadow-lg p-12 text-center">
+            <svg class="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+            <p class="text-gray-600">Loading border wait times...</p>
+        </div>
+
+        <!-- Content -->
+        <div id="content" class="hidden grid md:grid-cols-2 gap-6">
+            <!-- Entering U.S. -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center gap-3 mb-4 pb-4 border-b">
+                    <div class="bg-blue-100 p-3 rounded-lg">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900">Entering U.S.</h2>
+                        <p class="text-sm text-gray-600">From BC to Washington</p>
+                    </div>
+                </div>
+                <div id="usBoundList" class="space-y-3"></div>
+            </div>
+
+            <!-- Entering Canada -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center gap-3 mb-4 pb-4 border-b">
+                    <div class="bg-red-100 p-3 rounded-lg">
+                        <svg class="w-6 h-6 text-red-600 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900">Entering Canada</h2>
+                        <p class="text-sm text-gray-600">From Washington to BC</p>
+                    </div>
+                </div>
+                <div id="canadaBoundList" class="space-y-3"></div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-6 bg-white rounded-xl shadow-lg p-4 text-center text-sm text-gray-600">
+            <p class="font-semibold mb-2">Data Sources & Attribution</p>
+            <p>U.S.-bound data: U.S. Customs and Border Protection (CBP)</p>
+            <p class="mb-2">Canada-bound data: Contains information licensed under the Open Government Licence – Canada</p>
+            <p class="text-xs mt-3 text-gray-500">Wait times are estimates and may vary. Updates occur hourly.</p>
+            <p class="text-xs text-gray-500">This is an unofficial third-party application and is not endorsed by CBP or CBSA.</p>
+        </div>
+    </div>
+
+    <script>
+        // Filter configuration - only show these crossings
+        const US_BOUND_FILTERS = [
+            { name: 'Blaine', crossing: 'Point Roberts' },
+            { name: 'Blaine', crossing: 'Peace Arch' },
+            { name: 'Blaine', crossing: 'Pacific Highway' },
+            { name: 'Lynden', crossing: null },
+            { name: 'Sumas', crossing: null }
+        ];
+
+        const CANADA_BOUND_FILTERS = [
+            'Boundary Bay',
+            'Douglas',
+            'Pacific Highway',
+            'Aldergrove',
+            'Abbotsford-Huntingdon'
+        ];
+
+        let canadaBound = [];
+        let usBound = [];
+
+        function parseWaitTime(time) {
+            if (!time || time === 'N/A' || time === '--' || time === 'Not Applicable') return -1;
+            if (time === 'No Delay') return 0;
+            const match = time.match(/(\d+)/);
+            return match ? parseInt(match[1]) : -1;
+        }
+
+        function formatWaitTime(time) {
+            if (!time || time === 'N/A' || time === '--' || time === 'Not Applicable') return 'N/A';
+            if (time === 'No Delay') return 'No delay';
+            const mins = parseWaitTime(time);
+            if (mins === 0) return 'No delay';
+            if (mins > 0) return `${mins} min`;
+            return time;
+        }
+
+        function getDelayColor(time) {
+            const mins = parseWaitTime(time);
+            if (mins < 0) return 'text-gray-400';
+            if (mins === 0) return 'text-green-600';
+            if (mins < 15) return 'text-yellow-600';
+            if (mins < 30) return 'text-orange-600';
+            return 'text-red-600';
+        }
+
+        function matchesUSFilter(port) {
+            return US_BOUND_FILTERS.some(filter => {
+                const nameMatch = port.name === filter.name;
+                const crossingMatch = !filter.crossing || port.crossing === filter.crossing;
+                return nameMatch && crossingMatch;
+            });
+        }
+
+        function matchesCanadaFilter(port) {
+            return CANADA_BOUND_FILTERS.some(filter => 
+                port.office.includes(filter)
+            );
+        }
+
+        function renderData() {
+            // Filter and render U.S.-bound
+            const filteredUS = usBound.filter(matchesUSFilter);
+            const usList = document.getElementById('usBoundList');
+            
+            usList.innerHTML = filteredUS.map(port => `
+                <div class="border rounded-lg p-4 hover:shadow-md transition">
+                    <div class="flex items-start justify-between mb-2">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                                <h3 class="font-semibold text-gray-900">${port.name}</h3>
+                            </div>
+                            ${port.crossing ? `<p class="text-sm text-gray-600 ml-6">${port.crossing}</p>` : ''}
+                        </div>
+                        <span class="px-2 py-1 rounded text-xs font-medium ${
+                            port.status === 'Open' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                        }">
+                            ${port.status}
+                        </span>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-2 mt-3 text-sm">
+                        <div>
+                            <p class="text-gray-500 text-xs">Standard</p>
+                            <p class="font-semibold ${getDelayColor(port.passengerDelay)}">
+                                ${formatWaitTime(port.passengerDelay)}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-xs">NEXUS</p>
+                            <p class="font-semibold ${getDelayColor(port.nexusDelay)}">
+                                ${formatWaitTime(port.nexusDelay)}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-xs">Commercial</p>
+                            <p class="font-semibold ${getDelayColor(port.commercialDelay)}">
+                                ${formatWaitTime(port.commercialDelay)}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Filter and render Canada-bound
+            const filteredCanada = canadaBound.filter(matchesCanadaFilter);
+            const canadaList = document.getElementById('canadaBoundList');
+            
+            canadaList.innerHTML = filteredCanada.map(port => `
+                <div class="border rounded-lg p-4 hover:shadow-md transition">
+                    <div class="flex items-start justify-between mb-2">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                                <h3 class="font-semibold text-gray-900">${port.office}</h3>
+                            </div>
+                            <p class="text-sm text-gray-600 ml-6">${port.location}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-2 mt-3 text-sm">
+                        <div>
+                            <p class="text-gray-500 text-xs">Travellers</p>
+                            <p class="font-semibold ${getDelayColor(port.travellersCanada)}">
+                                ${formatWaitTime(port.travellersCanada)}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-xs">Commercial</p>
+                            <p class="font-semibold ${getDelayColor(port.commercialCanada)}">
+                                ${formatWaitTime(port.commercialCanada)}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <p class="text-xs text-gray-400 mt-2">Updated: ${port.updated}</p>
+                </div>
+            `).join('');
+        }
+
+        async function fetchData() {
+            const refreshIcon = document.getElementById('refreshIcon');
+            const loadingState = document.getElementById('loadingState');
+            const content = document.getElementById('content');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            refreshIcon.classList.add('animate-spin');
+            errorMessage.classList.add('hidden');
+
+            try {
+                // Fetch Canada-bound data via Netlify Function
+                const cbsaUrl = encodeURIComponent('https://www.cbsa-asfc.gc.ca/bwt-taf/bwt-eng.csv');
+                const cbsaRes = await fetch(`/.netlify/functions/border-data?url=${cbsaUrl}`);
+                
+                if (!cbsaRes.ok) throw new Error('Failed to fetch Canadian data');
+                
+                const cbsaText = await cbsaRes.text();
+                const cbsaLines = cbsaText.split('\n').slice(1).filter(line => line.trim());
+                
+                canadaBound = cbsaLines.map(line => {
+                    const parts = line.split(';;').map(p => p.trim());
+                    return {
+                        office: parts[0],
+                        location: parts[1],
+                        updated: parts[2],
+                        commercialCanada: parts[3],
+                        commercialUS: parts[4],
+                        travellersCanada: parts[5],
+                        travellersUS: parts[6],
+                    };
+                });
+
+                // Fetch U.S.-bound data via Netlify Function
+                const cbpUrl = encodeURIComponent('https://bwt.cbp.gov/xml/bwt.xml');
+                const cbpRes = await fetch(`/.netlify/functions/border-data?url=${cbpUrl}`);
+                
+                if (!cbpRes.ok) throw new Error('Failed to fetch U.S. data');
+                
+                const cbpText = await cbpRes.text();
+                const parser = new DOMParser();
+                const xml = parser.parseFromString(cbpText, 'text/xml');
+                
+                const ports = Array.from(xml.querySelectorAll('port'));
+                usBound = ports
+                    .filter(port => port.querySelector('border')?.textContent === 'Canadian Border')
+                    .map(port => {
+                        const getDelay = (selector) => {
+                            const elem = port.querySelector(selector);
+                            return elem?.textContent || 'N/A';
+                        };
+                        
+                        return {
+                            name: port.querySelector('port_name')?.textContent,
+                            crossing: port.querySelector('crossing_name')?.textContent,
+                            updated: port.querySelector('date')?.textContent,
+                            status: port.querySelector('port_status')?.textContent,
+                            commercialDelay: getDelay('commercial_vehicle_lanes standard_lanes delay_minutes'),
+                            passengerDelay: getDelay('passenger_vehicle_lanes standard_lanes delay_minutes'),
+                            nexusDelay: getDelay('passenger_vehicle_lanes NEXUS_SENTRI_lanes delay_minutes'),
+                        };
+                    });
+
+                loadingState.classList.add('hidden');
+                content.classList.remove('hidden');
+                
+                const lastUpdate = document.getElementById('lastUpdate');
+                const updateTime = document.getElementById('updateTime');
+                lastUpdate.classList.remove('hidden');
+                updateTime.textContent = new Date().toLocaleTimeString();
+
+                renderData();
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                loadingState.classList.add('hidden');
+                errorMessage.classList.remove('hidden');
+                document.getElementById('errorText').textContent = error.message;
+            } finally {
+                refreshIcon.classList.remove('animate-spin');
+            }
+        }
+
+        // Initial load
+        fetchData();
+
+        // Auto-refresh every 5 minutes
+        setInterval(fetchData, 300000);
+    </script>
+</body>
+</html>
