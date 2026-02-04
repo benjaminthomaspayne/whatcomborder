@@ -166,12 +166,7 @@
                 <div class="bg-white rounded-lg p-4 shadow-md">
                     <div class="flex items-start justify-between mb-3">
                         <div class="flex-1">
-                            <div class="flex items-center gap-2 mb-1">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-                                </svg>
-                                <h3 class="font-semibold text-gray-900">🗽 ${pair.usDisplay}</h3>
-                            </div>
+                            <h3 class="font-semibold text-gray-900">🗽 ${pair.usDisplay}</h3>
                         </div>
                         <span class="px-2 py-1 rounded text-xs font-medium ${
                             port.status === 'Open' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
@@ -213,12 +208,7 @@
                 <div class="bg-white rounded-lg p-4 shadow-md">
                     <div class="flex items-start justify-between mb-3">
                         <div class="flex-1">
-                            <div class="flex items-center gap-2 mb-1">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-                                </svg>
-                                <h3 class="font-semibold text-gray-900">🍁 ${pair.canadaDisplay}</h3>
-                            </div>
+                            <h3 class="font-semibold text-gray-900">🍁 ${pair.canadaDisplay}</h3>
                         </div>
                     </div>
                     
@@ -245,14 +235,17 @@
         function renderData() {
             const content = document.getElementById('content');
             
-            content.innerHTML = CROSSING_PAIRS.map(pair => {
+            content.innerHTML = CROSSING_PAIRS.map((pair, index) => {
                 const usPort = findUSPort(pair);
                 const canadaPort = findCanadaPort(pair);
                 
                 return `
-                    <div class="grid md:grid-cols-2 gap-3 md:gap-4">
-                        ${renderUSCard(usPort, pair)}
-                        ${renderCanadaCard(canadaPort, pair)}
+                    <div>
+                        <div class="grid md:grid-cols-2 gap-3 md:gap-4">
+                            ${renderUSCard(usPort, pair)}
+                            ${renderCanadaCard(canadaPort, pair)}
+                        </div>
+                        ${index < CROSSING_PAIRS.length - 1 ? '<div class="border-t-2 border-gray-200 my-6"></div>' : ''}
                     </div>
                 `;
             }).join('');
