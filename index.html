@@ -54,39 +54,9 @@
             <p class="text-gray-600">Loading border wait times...</p>
         </div>
 
-        <!-- Content -->
-        <div id="content" class="hidden grid md:grid-cols-2 gap-6">
-            <!-- Entering U.S. -->
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <div class="flex items-center gap-3 mb-4 pb-4 border-b">
-                    <div class="bg-blue-100 p-3 rounded-lg">
-                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-bold text-gray-900">Entering U.S. 🗽</h2>
-                        <p class="text-sm text-gray-600">From BC to Washington</p>
-                    </div>
-                </div>
-                <div id="usBoundList" class="space-y-3"></div>
-            </div>
-
-            <!-- Entering Canada -->
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <div class="flex items-center gap-3 mb-4 pb-4 border-b">
-                    <div class="bg-red-100 p-3 rounded-lg">
-                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-bold text-gray-900">Entering Canada 🍁</h2>
-                        <p class="text-sm text-gray-600">From Washington to BC</p>
-                    </div>
-                </div>
-                <div id="canadaBoundList" class="space-y-3"></div>
-            </div>
+        <!-- Content - Paired Crossings -->
+        <div id="content" class="hidden space-y-6">
+            <!-- Pairs will be inserted here -->
         </div>
 
         <!-- Footer -->
@@ -100,66 +70,57 @@
     </div>
 
     <script>
-        // Filter configuration - only show these crossings
-        const US_BOUND_FILTERS = [
-            { name: 'Blaine', crossing: 'Peace Arch' },
-            { name: 'Blaine', crossing: 'Pacific Highway' },
-            { name: 'Lynden', crossing: null },
-            { name: 'Sumas', crossing: null },
-            { name: 'Blaine', crossing: 'Point Roberts' }
-        ];
-
-        const CANADA_BOUND_FILTERS = [
-            'Douglas',
-            'Pacific Highway',
-            'Aldergrove',
-            'Abbotsford-Huntingdon',
-            'Boundary Bay'
+        // Crossing pairs configuration
+        const CROSSING_PAIRS = [
+            {
+                usName: 'Blaine',
+                usCrossing: 'Peace Arch',
+                usDisplay: 'Blaine, WA (Peace Arch)',
+                canadaFilter: 'Douglas',
+                canadaDisplay: 'Surrey, BC (Peace Arch)',
+                showUsCommercial: false,
+                showCanadaCommercial: false
+            },
+            {
+                usName: 'Blaine',
+                usCrossing: 'Pacific Highway',
+                usDisplay: 'Blaine, WA (Pacific Highway)',
+                canadaFilter: 'Pacific Highway',
+                canadaDisplay: 'Surrey, BC (Pacific Highway)',
+                showUsCommercial: true,
+                showCanadaCommercial: true
+            },
+            {
+                usName: 'Lynden',
+                usCrossing: null,
+                usDisplay: 'Lynden, WA',
+                canadaFilter: 'Aldergrove',
+                canadaDisplay: 'Aldergrove, BC / Lynden, WA',
+                showUsCommercial: true,
+                showCanadaCommercial: true
+            },
+            {
+                usName: 'Sumas',
+                usCrossing: null,
+                usDisplay: 'Sumas, WA',
+                canadaFilter: 'Abbotsford-Huntingdon',
+                canadaDisplay: 'Abbotsford, BC / Sumas, WA',
+                showUsCommercial: true,
+                showCanadaCommercial: true
+            },
+            {
+                usName: 'Blaine',
+                usCrossing: 'Point Roberts',
+                usDisplay: 'Point Roberts, WA',
+                canadaFilter: 'Boundary Bay',
+                canadaDisplay: 'Delta, BC / Point Roberts, WA',
+                showUsCommercial: true,
+                showCanadaCommercial: true
+            }
         ];
 
         let canadaBound = [];
         let usBound = [];
-
-        function getPortDisplayName(port, isUSBound) {
-            if (isUSBound) {
-                // U.S.-bound display names
-                if (port.name === 'Blaine' && port.crossing === 'Peace Arch') {
-                    return 'Blaine, WA (Peace Arch)';
-                } else if (port.name === 'Blaine' && port.crossing === 'Pacific Highway') {
-                    return 'Blaine, WA (Pacific Highway)';
-                } else if (port.name === 'Blaine' && port.crossing === 'Point Roberts') {
-                    return 'Point Roberts, WA';
-                } else if (port.name === 'Lynden') {
-                    return 'Lynden, WA';
-                } else if (port.name === 'Sumas') {
-                    return 'Sumas, WA';
-                }
-            } else {
-                // Canada-bound display names
-                if (port.office.includes('Douglas')) {
-                    return 'Surrey, BC (Peace Arch)';
-                } else if (port.office.includes('Pacific Highway')) {
-                    return 'Surrey, BC (Pacific Highway)';
-                } else if (port.office.includes('Aldergrove')) {
-                    return 'Aldergrove, BC / Lynden, WA';
-                } else if (port.office.includes('Abbotsford-Huntingdon')) {
-                    return 'Abbotsford, BC / Sumas, WA';
-                } else if (port.office.includes('Boundary Bay')) {
-                    return 'Delta, BC / Point Roberts, WA';
-                }
-            }
-            return port.name || port.office;
-        }
-
-        function shouldShowCommercial(port, isUSBound) {
-            if (isUSBound) {
-                // Hide commercial for Peace Arch
-                return !(port.name === 'Blaine' && port.crossing === 'Peace Arch');
-            } else {
-                // Hide commercial for Douglas (Peace Arch)
-                return !port.office.includes('Douglas');
-            }
-        }
 
         function parseWaitTime(time) {
             if (!time || time === 'N/A' || time === '--' || time === 'Not Applicable') return -1;
@@ -186,41 +147,30 @@
             return 'text-red-600';
         }
 
-        function matchesUSFilter(port) {
-            return US_BOUND_FILTERS.some(filter => {
-                const nameMatch = port.name === filter.name;
-                const crossingMatch = !filter.crossing || port.crossing === filter.crossing;
+        function findUSPort(pair) {
+            return usBound.find(port => {
+                const nameMatch = port.name === pair.usName;
+                const crossingMatch = !pair.usCrossing || port.crossing === pair.usCrossing;
                 return nameMatch && crossingMatch;
             });
         }
 
-        function matchesCanadaFilter(port) {
-            return CANADA_BOUND_FILTERS.some(filter => 
-                port.office.includes(filter)
-            );
+        function findCanadaPort(pair) {
+            return canadaBound.find(port => port.office.includes(pair.canadaFilter));
         }
 
-        function renderData() {
-            // Filter U.S.-bound and maintain order from filter array
-            const filteredUS = US_BOUND_FILTERS
-                .map(filter => usBound.find(port => {
-                    const nameMatch = port.name === filter.name;
-                    const crossingMatch = !filter.crossing || port.crossing === filter.crossing;
-                    return nameMatch && crossingMatch;
-                }))
-                .filter(port => port !== undefined);
-            const usList = document.getElementById('usBoundList');
+        function renderUSCard(port, pair) {
+            if (!port) return '<div class="bg-gray-100 rounded-lg p-4 text-gray-500">Data unavailable</div>';
             
-            usList.innerHTML = filteredUS.map(port => `
-                <div class="border rounded-lg p-4 hover:shadow-md transition">
-                    <div class="flex items-start justify-between mb-2">
+            return `
+                <div class="bg-white rounded-lg p-4 shadow-md">
+                    <div class="flex items-start justify-between mb-3">
                         <div class="flex-1">
                             <div class="flex items-center gap-2 mb-1">
                                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
                                 </svg>
-                                <h3 class="font-semibold text-gray-900">${getPortDisplayName(port, true)}</h3>
+                                <h3 class="font-semibold text-gray-900">🗽 ${pair.usDisplay}</h3>
                             </div>
                         </div>
                         <span class="px-2 py-1 rounded text-xs font-medium ${
@@ -230,22 +180,22 @@
                         </span>
                     </div>
                     
-                    <div class="grid ${shouldShowCommercial(port, true) ? 'grid-cols-3' : 'grid-cols-2'} gap-2 mt-3 text-sm">
+                    <div class="grid ${pair.showUsCommercial ? 'grid-cols-3' : 'grid-cols-2'} gap-3 text-sm">
                         <div>
-                            <p class="text-gray-500 text-xs">Standard</p>
+                            <p class="text-gray-500 text-xs mb-1">Standard</p>
                             <p class="font-semibold ${getDelayColor(port.passengerDelay)}">
                                 ${formatWaitTime(port.passengerDelay)}
                             </p>
                         </div>
                         <div>
-                            <p class="text-gray-500 text-xs">NEXUS</p>
+                            <p class="text-gray-500 text-xs mb-1">NEXUS</p>
                             <p class="font-semibold ${getDelayColor(port.nexusDelay)}">
                                 ${formatWaitTime(port.nexusDelay)}
                             </p>
                         </div>
-                        ${shouldShowCommercial(port, true) ? `
+                        ${pair.showUsCommercial ? `
                         <div>
-                            <p class="text-gray-500 text-xs">Commercial</p>
+                            <p class="text-gray-500 text-xs mb-1">Commercial</p>
                             <p class="font-semibold ${getDelayColor(port.commercialDelay)}">
                                 ${formatWaitTime(port.commercialDelay)}
                             </p>
@@ -253,38 +203,35 @@
                         ` : ''}
                     </div>
                 </div>
-            `).join('');
+            `;
+        }
 
-            // Filter Canada-bound and maintain order from filter array
-            const filteredCanada = CANADA_BOUND_FILTERS
-                .map(filter => canadaBound.find(port => port.office.includes(filter)))
-                .filter(port => port !== undefined);
-            const canadaList = document.getElementById('canadaBoundList');
+        function renderCanadaCard(port, pair) {
+            if (!port) return '<div class="bg-gray-100 rounded-lg p-4 text-gray-500">Data unavailable</div>';
             
-            canadaList.innerHTML = filteredCanada.map(port => `
-                <div class="border rounded-lg p-4 hover:shadow-md transition">
-                    <div class="flex items-start justify-between mb-2">
+            return `
+                <div class="bg-white rounded-lg p-4 shadow-md">
+                    <div class="flex items-start justify-between mb-3">
                         <div class="flex-1">
                             <div class="flex items-center gap-2 mb-1">
                                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
                                 </svg>
-                                <h3 class="font-semibold text-gray-900">${getPortDisplayName(port, false)}</h3>
+                                <h3 class="font-semibold text-gray-900">🍁 ${pair.canadaDisplay}</h3>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="grid ${shouldShowCommercial(port, false) ? 'grid-cols-2' : 'grid-cols-1'} gap-2 mt-3 text-sm">
+                    <div class="grid ${pair.showCanadaCommercial ? 'grid-cols-2' : 'grid-cols-1'} gap-3 text-sm">
                         <div>
-                            <p class="text-gray-500 text-xs">Travellers</p>
+                            <p class="text-gray-500 text-xs mb-1">Travellers</p>
                             <p class="font-semibold ${getDelayColor(port.travellersCanada)}">
                                 ${formatWaitTime(port.travellersCanada)}
                             </p>
                         </div>
-                        ${shouldShowCommercial(port, false) ? `
+                        ${pair.showCanadaCommercial ? `
                         <div>
-                            <p class="text-gray-500 text-xs">Commercial</p>
+                            <p class="text-gray-500 text-xs mb-1">Commercial</p>
                             <p class="font-semibold ${getDelayColor(port.commercialCanada)}">
                                 ${formatWaitTime(port.commercialCanada)}
                             </p>
@@ -292,7 +239,23 @@
                         ` : ''}
                     </div>
                 </div>
-            `).join('');
+            `;
+        }
+
+        function renderData() {
+            const content = document.getElementById('content');
+            
+            content.innerHTML = CROSSING_PAIRS.map(pair => {
+                const usPort = findUSPort(pair);
+                const canadaPort = findCanadaPort(pair);
+                
+                return `
+                    <div class="grid md:grid-cols-2 gap-3 md:gap-4">
+                        ${renderUSCard(usPort, pair)}
+                        ${renderCanadaCard(canadaPort, pair)}
+                    </div>
+                `;
+            }).join('');
         }
 
         async function fetchData() {
