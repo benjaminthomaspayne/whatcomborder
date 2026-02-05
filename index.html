@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Whatcom County border crossing wait times</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://flagpack.xyz/css/flags.css" rel="stylesheet">
     <style>
         @keyframes spin {
             to { transform: rotate(360deg); }
@@ -166,7 +167,10 @@
                 <div class="bg-white rounded-lg p-4 shadow-md">
                     <div class="flex items-start justify-between mb-3">
                         <div class="flex-1">
-                            <h3 class="font-semibold text-gray-900">🗽 ${pair.usDisplay}</h3>
+                            <div class="flex items-center gap-2">
+                                <span class="fp fp-rounded us" style="width: 1.25rem; height: 1.25rem;"></span>
+                                <h3 class="font-semibold text-gray-900">${pair.usDisplay}</h3>
+                            </div>
                         </div>
                         <span class="px-2 py-1 rounded text-xs font-medium ${
                             port.status === 'Open' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
@@ -208,13 +212,16 @@
                 <div class="bg-white rounded-lg p-4 shadow-md">
                     <div class="flex items-start justify-between mb-3">
                         <div class="flex-1">
-                            <h3 class="font-semibold text-gray-900">🍁 ${pair.canadaDisplay}</h3>
+                            <div class="flex items-center gap-2">
+                                <span class="fp fp-rounded ca" style="width: 1.25rem; height: 1.25rem;"></span>
+                                <h3 class="font-semibold text-gray-900">${pair.canadaDisplay}</h3>
+                            </div>
                         </div>
                     </div>
                     
                     <div class="grid ${pair.showCanadaCommercial ? 'grid-cols-2' : 'grid-cols-1'} gap-3 text-sm">
                         <div>
-                            <p class="text-gray-500 text-xs mb-1">Travellers</p>
+                            <p class="text-gray-500 text-xs mb-1">Standard</p>
                             <p class="font-semibold ${getDelayColor(port.travellersCanada)}">
                                 ${formatWaitTime(port.travellersCanada)}
                             </p>
@@ -245,7 +252,7 @@
                             ${renderUSCard(usPort, pair)}
                             ${renderCanadaCard(canadaPort, pair)}
                         </div>
-                        ${index < CROSSING_PAIRS.length - 1 ? '<div class="border-t-2 border-gray-200 my-6"></div>' : ''}
+                        ${index < CROSSING_PAIRS.length - 1 ? '<div class="border-t-4 border-gray-300 my-6"></div>' : ''}
                     </div>
                 `;
             }).join('');
