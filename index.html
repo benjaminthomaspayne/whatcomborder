@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Whatcom County border crossing wait times</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://flagpack.xyz/css/flags.css" rel="stylesheet">
     <style>
         @keyframes spin {
             to { transform: rotate(360deg); }
@@ -168,7 +167,9 @@
                     <div class="flex items-start justify-between mb-3">
                         <div class="flex-1">
                             <div class="flex items-center gap-2">
-                                <span class="fp fp-rounded us" style="width: 1.25rem; height: 1.25rem;"></span>
+                                <img src="https://flagcdn.com/20x15/us.png" 
+                                     srcset="https://flagcdn.com/40x30/us.png 2x, https://flagcdn.com/60x45/us.png 3x"
+                                     width="20" height="15" alt="US Flag" class="inline-block">
                                 <h3 class="font-semibold text-gray-900">${pair.usDisplay}</h3>
                             </div>
                         </div>
@@ -213,7 +214,9 @@
                     <div class="flex items-start justify-between mb-3">
                         <div class="flex-1">
                             <div class="flex items-center gap-2">
-                                <span class="fp fp-rounded ca" style="width: 1.25rem; height: 1.25rem;"></span>
+                                <img src="https://flagcdn.com/20x15/ca.png" 
+                                     srcset="https://flagcdn.com/40x30/ca.png 2x, https://flagcdn.com/60x45/ca.png 3x"
+                                     width="20" height="15" alt="Canada Flag" class="inline-block">
                                 <h3 class="font-semibold text-gray-900">${pair.canadaDisplay}</h3>
                             </div>
                         </div>
