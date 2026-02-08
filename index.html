@@ -23,7 +23,7 @@
                     <h1 class="text-3xl font-bold text-gray-900 mb-2">
                         Whatcom County border crossing wait times
                     </h1>
-                    <p class="text-gray-600">Real-time estimates for the five U.S.-Canada border crossings in Whatcom County, Washington</p>
+                    <p class="text-gray-600">A free and simple tool to track all of Whatcom County, Washington's border crossing wait times — in both directions.</p>
                 </div>
                 <button onclick="fetchData()" id="refreshBtn" class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
                     <svg id="refreshIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -37,7 +37,7 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
-                Last updated: <span id="updateTime"></span>
+                Last checked: <span id="updateTime"></span>
             </div>
 
             <div id="errorMessage" class="hidden mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -73,47 +73,57 @@
         // Crossing pairs configuration
         const CROSSING_PAIRS = [
             {
+                header: 'Peace Arch crossing (Blaine, WA ↔ Surrey/Douglas/White Rock, BC)',
+                subhead: 'Along Interstate 5 (I-5) in Washington and Highway 99 in British Columbia. No commercial vehicles (e.g., semis) allowed. Open 24/7.',
                 usName: 'Blaine',
                 usCrossing: 'Peace Arch',
-                usDisplay: 'Blaine, WA (Peace Arch)',
+                usDisplay: 'Blaine, WA',
                 canadaFilter: 'Douglas',
-                canadaDisplay: 'Surrey, BC (Peace Arch)',
+                canadaDisplay: 'Surrey/Douglas/White Rock, BC',
                 showUsCommercial: false,
                 showCanadaCommercial: false
             },
             {
+                header: 'Pacific Highway crossing (Blaine, WA ↔ Surrey/Douglas/White Rock, BC)',
+                subhead: 'Along State Route 543 in Washington and Highway 15 in British Columbia (collectively referred to locally as Pacific Highway). Located about 1 mile east of the Peace Arch crossing. Commonly known as "the truck crossing," but it can also process passenger vehicles. Open 24/7.',
                 usName: 'Blaine',
                 usCrossing: 'Pacific Highway',
-                usDisplay: 'Blaine, WA (Pacific Highway)',
+                usDisplay: 'Blaine, WA',
                 canadaFilter: 'Pacific Highway',
-                canadaDisplay: 'Surrey, BC (Pacific Highway)',
+                canadaDisplay: 'Surrey/Douglas/White Rock, BC',
                 showUsCommercial: true,
                 showCanadaCommercial: true
             },
             {
+                header: 'Lynden crossing (Lynden, WA ↔ Langley Township/Aldergrove, BC)',
+                subhead: 'Along State Route 539 (Guide Meridian Road) in Washington and Highway 13 (Diversion Street) in British Columbia. Open 8 a.m. to midnight.',
                 usName: 'Lynden',
                 usCrossing: null,
                 usDisplay: 'Lynden, WA',
                 canadaFilter: 'Aldergrove',
-                canadaDisplay: 'Aldergrove, BC / Lynden, WA',
+                canadaDisplay: 'Langley Township/Aldergrove, BC',
                 showUsCommercial: true,
                 showCanadaCommercial: true
             },
             {
+                header: 'Sumas crossing (Sumas, WA ↔ Abbotsford/Huntingdon, BC)',
+                subhead: 'Along State Route 9 (Cherry Street) in Washington and Highway 11 (Sumas Way) in British Columbia. Open 24/7.',
                 usName: 'Sumas',
                 usCrossing: null,
                 usDisplay: 'Sumas, WA',
                 canadaFilter: 'Abbotsford-Huntingdon',
-                canadaDisplay: 'Abbotsford, BC / Sumas, WA',
+                canadaDisplay: 'Abbotsford/Huntingdon, BC',
                 showUsCommercial: true,
                 showCanadaCommercial: true
             },
             {
+                header: 'Point Roberts crossing (Point Roberts, WA ↔ Delta/Tsawwassen, BC)',
+                subhead: 'Along Tyee Drive in Point Roberts and 56th Street in Tsawwassen. Open 24/7.',
                 usName: 'Blaine',
                 usCrossing: 'Point Roberts',
                 usDisplay: 'Point Roberts, WA',
                 canadaFilter: 'Boundary Bay',
-                canadaDisplay: 'Delta, BC / Point Roberts, WA',
+                canadaDisplay: 'Delta/Tsawwassen, BC',
                 showUsCommercial: true,
                 showCanadaCommercial: true
             }
@@ -220,11 +230,17 @@
                         </div>
                     </div>
                     
-                    <div class="grid ${pair.showCanadaCommercial ? 'grid-cols-2' : 'grid-cols-1'} gap-3 text-sm">
+                    <div class="grid ${pair.showCanadaCommercial ? 'grid-cols-3' : 'grid-cols-2'} gap-3 text-sm">
                         <div>
                             <p class="text-gray-500 text-xs mb-1">Standard</p>
                             <p class="font-semibold ${getDelayColor(port.travellersCanada)}">
                                 ${formatWaitTime(port.travellersCanada)}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-xs mb-1">NEXUS</p>
+                            <p class="font-semibold text-gray-400">
+                                N/A
                             </p>
                         </div>
                         ${pair.showCanadaCommercial ? `
@@ -249,11 +265,15 @@
                 
                 return `
                     <div>
+                        <div class="mb-3">
+                            <h2 class="text-lg font-bold text-gray-900 underline mb-1">${pair.header}</h2>
+                            <p class="text-sm font-bold text-gray-600">${pair.subhead}</p>
+                        </div>
                         <div class="grid md:grid-cols-2 gap-3 md:gap-4">
                             ${renderUSCard(usPort, pair)}
                             ${renderCanadaCard(canadaPort, pair)}
                         </div>
-                        ${index < CROSSING_PAIRS.length - 1 ? '<div class="border-t-4 border-gray-300 my-6"></div>' : ''}
+                        ${index < CROSSING_PAIRS.length - 1 ? '<div class="border-t-2 border-gray-200 my-6"></div>' : ''}
                     </div>
                 `;
             }).join('');
