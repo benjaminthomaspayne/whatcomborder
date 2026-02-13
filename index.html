@@ -65,15 +65,18 @@
         <!-- Footer -->
         <div class="mt-6 bg-white rounded-xl shadow-lg p-4 text-center text-sm text-gray-600">
             <p class="font-semibold mb-2">Data Sources & Attribution</p>
-            <p>U.S.-bound data: U.S. Customs and Border Protection (CBP)</p>
-            <p class="mb-2">Canada-bound data: Canada Border Services Agency (CBSA) / Contains information licensed under the Open Government Licence – Canada</p>
-            <p class="text-xs mt-3 text-gray-500">Wait times are estimates and may vary.</p>
+            <p>U.S.-bound wait time data: U.S. Customs and Border Protection (CBP)</p>
+            <p>Canada-bound wait time data: Canada Border Services Agency (CBSA)</p>
+            <p>U.S. weather data: National Weather Service through Open-Meteo.com</p>
+            <p class="mb-2">Canadian weather data: Meteorological Service of Canada through Open-Meteo.com</p>
+            <p class="text-xs mt-3 text-gray-500">Contains information licensed under Canada's Open Government Licence</p>
+            <p class="text-xs text-gray-500">Wait times are estimates and may vary.</p>
             <p class="text-xs text-gray-500">This is an unofficial third-party application and is not endorsed by CBP or CBSA.</p>
         </div>
     </div>
 
     <script>
-        // Crossing pairs configuration
+        // Crossing pairs configuration with coordinates
         const CROSSING_PAIRS = [
             {
                 header: 'Peace Arch crossing',
@@ -81,8 +84,12 @@
                 usName: 'Blaine',
                 usCrossing: 'Peace Arch',
                 usDisplay: 'Blaine, WA',
+                usLat: 49.0009,
+                usLon: -122.7536,
                 canadaFilter: 'Douglas',
                 canadaDisplay: 'Surrey/Douglas/White Rock, BC',
+                canadaLat: 49.0009,
+                canadaLon: -122.7536,
                 showUsCommercial: false,
                 showCanadaCommercial: false
             },
@@ -92,8 +99,12 @@
                 usName: 'Blaine',
                 usCrossing: 'Pacific Highway',
                 usDisplay: 'Blaine, WA',
+                usLat: 49.0020,
+                usLon: -122.7353,
                 canadaFilter: 'Pacific Highway',
                 canadaDisplay: 'Surrey/Douglas/White Rock, BC',
+                canadaLat: 49.0020,
+                canadaLon: -122.7353,
                 showUsCommercial: true,
                 showCanadaCommercial: true
             },
@@ -103,8 +114,12 @@
                 usName: 'Lynden',
                 usCrossing: null,
                 usDisplay: 'Lynden, WA',
+                usLat: 49.0019,
+                usLon: -122.4852,
                 canadaFilter: 'Aldergrove',
                 canadaDisplay: 'Langley Township/Aldergrove, BC',
+                canadaLat: 49.0019,
+                canadaLon: -122.4852,
                 showUsCommercial: true,
                 showCanadaCommercial: true
             },
@@ -114,8 +129,12 @@
                 usName: 'Sumas',
                 usCrossing: null,
                 usDisplay: 'Sumas, WA',
+                usLat: 49.0022,
+                usLon: -122.2654,
                 canadaFilter: 'Abbotsford-Huntingdon',
                 canadaDisplay: 'Abbotsford/Huntingdon, BC',
+                canadaLat: 49.0022,
+                canadaLon: -122.2654,
                 showUsCommercial: true,
                 showCanadaCommercial: true
             },
@@ -125,8 +144,12 @@
                 usName: 'Blaine',
                 usCrossing: 'Point Roberts',
                 usDisplay: 'Point Roberts, WA',
+                usLat: 49.0019,
+                usLon: -123.0679,
                 canadaFilter: 'Boundary Bay',
                 canadaDisplay: 'Delta/Tsawwassen, BC',
+                canadaLat: 49.0019,
+                canadaLon: -123.0679,
                 showUsCommercial: true,
                 showCanadaCommercial: true
             }
@@ -134,6 +157,7 @@
 
         let canadaBound = [];
         let usBound = [];
+        let weatherData = {};
 
         function hasCanadaData(port) {
             if (!port) return false;
@@ -157,51 +181,153 @@
         }
 
         function formatWaitTime(time) {
-            if (!time || time === 'N/A' || time === '--' || time === 'Not Applicable') return 'N/A';
-            if (time === 'No Delay') return 'No delay';
-            const mins = parseWaitTime(time);
-            if (mins === 0) return 'No delay';
-            if (mins > 0) return `${mins} min`;
-            return time;
+            const minutes = parseWaitTime(time);
+            if (minutes === -1) return 'N/A';
+            if (minutes === 0) return 'No delay';
+            return `${minutes} min`;
         }
 
         function getDelayColor(time) {
-            const mins = parseWaitTime(time);
-            if (mins < 0) return 'text-gray-400';
-            if (mins === 0) return 'text-green-600';
-            if (mins < 15) return 'text-yellow-600';
-            if (mins < 30) return 'text-orange-600';
+            const minutes = parseWaitTime(time);
+            if (minutes === -1) return 'text-gray-400';
+            if (minutes === 0) return 'text-green-600';
+            if (minutes <= 15) return 'text-green-600';
+            if (minutes <= 30) return 'text-yellow-600';
             return 'text-red-600';
+        }
+
+        function getWeatherEmoji(code) {
+            // WMO Weather codes
+            if (code === 0) return '☀️';
+            if (code === 1 || code === 2) return '🌤️';
+            if (code === 3) return '☁️';
+            if (code >= 45 && code <= 48) return '🌫️';
+            if (code >= 51 && code <= 67) return '🌧️';
+            if (code >= 71 && code <= 77) return '❄️';
+            if (code >= 80 && code <= 82) return '🌧️';
+            if (code >= 85 && code <= 86) return '❄️';
+            if (code >= 95) return '⛈️';
+            return '🌤️';
+        }
+
+        function getWeatherDescription(code) {
+            if (code === 0) return 'Clear sky';
+            if (code === 1) return 'Mainly clear';
+            if (code === 2) return 'Partly cloudy';
+            if (code === 3) return 'Overcast';
+            if (code >= 45 && code <= 48) return 'Foggy';
+            if (code >= 51 && code <= 55) return 'Drizzle';
+            if (code >= 56 && code <= 57) return 'Freezing drizzle';
+            if (code >= 61 && code <= 65) return 'Rain';
+            if (code >= 66 && code <= 67) return 'Freezing rain';
+            if (code >= 71 && code <= 75) return 'Snow';
+            if (code >= 77) return 'Snow grains';
+            if (code >= 80 && code <= 82) return 'Rain showers';
+            if (code >= 85 && code <= 86) return 'Snow showers';
+            if (code >= 95) return 'Thunderstorm';
+            return 'Partly cloudy';
+        }
+
+        async function fetchWeather() {
+            try {
+                // Fetch weather for all unique locations
+                const weatherPromises = CROSSING_PAIRS.map(async pair => {
+                    // Fetch US weather
+                    const usUrl = `https://api.open-meteo.com/v1/forecast?latitude=${pair.usLat}&longitude=${pair.usLon}&current=temperature_2m,weather_code&temperature_unit=fahrenheit&timezone=America/Los_Angeles`;
+                    const usResponse = await fetch(usUrl);
+                    const usData = await usResponse.json();
+
+                    // Fetch Canada weather
+                    const canadaUrl = `https://api.open-meteo.com/v1/forecast?latitude=${pair.canadaLat}&longitude=${pair.canadaLon}&current=temperature_2m,weather_code&temperature_unit=celsius&timezone=America/Vancouver`;
+                    const canadaResponse = await fetch(canadaUrl);
+                    const canadaData = await canadaResponse.json();
+
+                    return {
+                        pairIndex: CROSSING_PAIRS.indexOf(pair),
+                        us: {
+                            temp: Math.round(usData.current.temperature_2m),
+                            code: usData.current.weather_code
+                        },
+                        canada: {
+                            temp: Math.round(canadaData.current.temperature_2m),
+                            code: canadaData.current.weather_code
+                        }
+                    };
+                });
+
+                const results = await Promise.all(weatherPromises);
+                results.forEach(result => {
+                    weatherData[result.pairIndex] = result;
+                });
+            } catch (error) {
+                console.error('Error fetching weather:', error);
+            }
         }
 
         function findUSPort(pair) {
             return usBound.find(port => {
                 const nameMatch = port.name === pair.usName;
-                const crossingMatch = !pair.usCrossing || port.crossing === pair.usCrossing;
+                const crossingMatch = pair.usCrossing ? port.crossing === pair.usCrossing : true;
                 return nameMatch && crossingMatch;
             });
         }
 
         function findCanadaPort(pair) {
-            return canadaBound.find(port => port.office.includes(pair.canadaFilter));
+            return canadaBound.find(port => 
+                port.office && port.office.includes(pair.canadaFilter)
+            );
         }
 
-        function renderUSCard(port, pair) {
-            if (!port) return '<div class="bg-gray-100 rounded-lg p-4 text-gray-500">Data unavailable</div>';
+        function renderUSCard(port, pair, pairIndex) {
+            if (!port) {
+                return `
+                    <div class="bg-white rounded-lg p-4 shadow-md">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <img src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/svg/1f1fa-1f1f8.svg" 
+                                         width="20" height="20" alt="US Flag" class="inline-block">
+                                    <h3 class="font-semibold text-gray-900">${pair.usDisplay}</h3>
+                                </div>
+                                ${weatherData[pairIndex] ? `
+                                <div class="flex items-center gap-2 text-xs text-gray-600 ml-7">
+                                    <span class="text-lg">${getWeatherEmoji(weatherData[pairIndex].us.code)}</span>
+                                    <span class="font-medium">${weatherData[pairIndex].us.temp}°F</span>
+                                    <span class="text-gray-400">•</span>
+                                    <span>${getWeatherDescription(weatherData[pairIndex].us.code)}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                            <span class="px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-500">
+                                No data
+                            </span>
+                        </div>
+                        <p class="text-sm text-gray-500">Wait time data unavailable</p>
+                    </div>
+                `;
+            }
+
+            const isOpen = port.status === 'Open';
             
             return `
                 <div class="bg-white rounded-lg p-4 shadow-md">
                     <div class="flex items-start justify-between mb-3">
                         <div class="flex-1">
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-2 mb-1">
                                 <img src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/svg/1f1fa-1f1f8.svg" 
                                      width="20" height="20" alt="US Flag" class="inline-block">
                                 <h3 class="font-semibold text-gray-900">${pair.usDisplay}</h3>
                             </div>
+                            ${weatherData[pairIndex] ? `
+                            <div class="flex items-center gap-2 text-xs text-gray-600 ml-7">
+                                <span class="text-lg">${getWeatherEmoji(weatherData[pairIndex].us.code)}</span>
+                                <span class="font-medium">${weatherData[pairIndex].us.temp}°F</span>
+                                <span class="text-gray-400">•</span>
+                                <span>${getWeatherDescription(weatherData[pairIndex].us.code)}</span>
+                            </div>
+                            ` : ''}
                         </div>
-                        <span class="px-2 py-1 rounded text-xs font-medium ${
-                            port.status === 'Open' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                        }">
+                        <span class="px-2 py-1 rounded text-xs font-medium ${isOpen ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
                             ${port.status}
                         </span>
                     </div>
@@ -232,20 +358,31 @@
             `;
         }
 
-        function renderCanadaCard(port, pair) {
+        function renderCanadaCard(port, pair, pairIndex) {
             if (!port || !hasCanadaData(port)) {
                 return `
                     <div class="bg-white rounded-lg p-4 shadow-md">
                         <div class="flex items-start justify-between mb-3">
                             <div class="flex-1">
-                                <div class="flex items-center gap-2">
+                                <div class="flex items-center gap-2 mb-1">
                                     <img src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/svg/1f1e8-1f1e6.svg" 
                                          width="20" height="20" alt="Canada Flag" class="inline-block">
                                     <h3 class="font-semibold text-gray-900">${pair.canadaDisplay}</h3>
                                 </div>
+                                ${weatherData[pairIndex] ? `
+                                <div class="flex items-center gap-2 text-xs text-gray-600 ml-7">
+                                    <span class="text-lg">${getWeatherEmoji(weatherData[pairIndex].canada.code)}</span>
+                                    <span class="font-medium">${weatherData[pairIndex].canada.temp}°C</span>
+                                    <span class="text-gray-400">•</span>
+                                    <span>${getWeatherDescription(weatherData[pairIndex].canada.code)}</span>
+                                </div>
+                                ` : ''}
                             </div>
+                            <span class="px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-500">
+                                No data
+                            </span>
                         </div>
-                        <p class="text-sm text-gray-600 italic">Data currently unavailable from the Canada Border Services Agency (CBSA)</p>
+                        <p class="text-sm text-gray-500">Wait time data unavailable</p>
                     </div>
                 `;
             }
@@ -254,11 +391,19 @@
                 <div class="bg-white rounded-lg p-4 shadow-md">
                     <div class="flex items-start justify-between mb-3">
                         <div class="flex-1">
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-2 mb-1">
                                 <img src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/svg/1f1e8-1f1e6.svg" 
                                      width="20" height="20" alt="Canada Flag" class="inline-block">
                                 <h3 class="font-semibold text-gray-900">${pair.canadaDisplay}</h3>
                             </div>
+                            ${weatherData[pairIndex] ? `
+                            <div class="flex items-center gap-2 text-xs text-gray-600 ml-7">
+                                <span class="text-lg">${getWeatherEmoji(weatherData[pairIndex].canada.code)}</span>
+                                <span class="font-medium">${weatherData[pairIndex].canada.temp}°C</span>
+                                <span class="text-gray-400">•</span>
+                                <span>${getWeatherDescription(weatherData[pairIndex].canada.code)}</span>
+                            </div>
+                            ` : ''}
                         </div>
                         <span class="px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-700">
                             Open
@@ -305,8 +450,8 @@
                             <p class="text-sm font-bold text-gray-600">${pair.subhead}</p>
                         </div>
                         <div class="grid md:grid-cols-2 gap-3 md:gap-4">
-                            ${renderUSCard(usPort, pair)}
-                            ${renderCanadaCard(canadaPort, pair)}
+                            ${renderUSCard(usPort, pair, index)}
+                            ${renderCanadaCard(canadaPort, pair, index)}
                         </div>
                         ${index < CROSSING_PAIRS.length - 1 ? '<div class="border-t-2 border-gray-200 my-6"></div>' : ''}
                     </div>
@@ -324,6 +469,9 @@
             errorMessage.classList.add('hidden');
 
             try {
+                // Fetch weather data first
+                await fetchWeather();
+
                 // Fetch Canada-bound data via Netlify Function
                 const cbsaUrl = encodeURIComponent('https://www.cbsa-asfc.gc.ca/bwt-taf/bwt-eng.csv');
                 const cbsaRes = await fetch(`/.netlify/functions/border-data?url=${cbsaUrl}`);
