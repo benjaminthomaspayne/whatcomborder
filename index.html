@@ -12,9 +12,12 @@
         .animate-spin {
             animation: spin 1s linear infinite;
         }
+        html {
+            scroll-behavior: smooth;
+        }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen p-4">
+<body class="bg-gradient-to-br from-slate-50 to-cyan-100 min-h-screen p-4">
     <div class="max-w-6xl mx-auto">
         <!-- Header -->
         <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
@@ -26,6 +29,9 @@
                     <p class="text-gray-600">A free and simple tool to track all of Whatcom County, Washington's border crossing wait times — in both directions 
                         <img src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/svg/1f1fa-1f1f8.svg" width="16" height="16" alt="US Flag" class="inline-block">
                         <img src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/svg/1f1e8-1f1e6.svg" width="16" height="16" alt="Canada Flag" class="inline-block">
+                    </p>
+                    <p class="text-sm mt-2">
+                        <a href="#how-it-works" class="text-blue-600 hover:text-blue-800 underline">How it works</a>
                     </p>
                 </div>
                 <button onclick="fetchData()" id="refreshBtn" class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
@@ -62,16 +68,39 @@
             <!-- Pairs will be inserted here -->
         </div>
 
+        <!-- How It Works Section -->
+        <div id="how-it-works" class="mt-6 bg-white rounded-xl shadow-lg p-6">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">How it works</h2>
+            <div class="text-gray-700 space-y-4">
+                <p>
+                    My name is Benjamin Payne, and I live in Bellingham, Washington. After having moved here in 2025, I realized that there existed no centralized portal to check wait times at all five ports of entry along the U.S-Canada border in Whatcom County. So, I designed this web app. It pulls the latest available waiting time estimate data from both the U.S. and Canadian governments, and presents them in a clean layout.
+                </p>
+                <p>
+                    I will always make sure this app is free, but if you'd like, you can
+                </p>
+                <div class="flex justify-center my-4">
+                    <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="benjaminpayne" data-color="#FFDD00" data-emoji=""  data-font="Cookie" data-text="Buy me a coffee" data-outline-color="#000000" data-font-color="#000000" data-coffee-color="#ffffff" ></script>
+                </div>
+                <p class="text-center text-sm text-gray-600">
+                    (this is the Pacific Northwest, after all ☕)
+                </p>
+                <p>
+                    If you have any suggestions on how this tool could be improved, please feel free to <a href="mailto:benjaminthomaspayne@gmail.com" class="text-blue-600 hover:text-blue-800 underline">email me here</a>. I enjoy tinkering with the code to improve the app's look, feel, and functionality. For example, I recently added weather conditions at each of the crossing locations, using an open-source tool called Open-Meteo that pulls from various national weather services.
+                </p>
+            </div>
+        </div>
+
         <!-- Footer -->
         <div class="mt-6 bg-white rounded-xl shadow-lg p-4 text-center text-sm text-gray-600">
             <p class="font-semibold mb-2">Data Sources & Attribution</p>
+            <p>App created by Benjamin Payne. © 2026</p>
             <p>U.S.-bound wait time data: U.S. Customs and Border Protection (CBP)</p>
             <p>Canada-bound wait time data: Canada Border Services Agency (CBSA)</p>
-            <p>U.S. weather data: National Weather Service through Open-Meteo.com</p>
-            <p class="mb-2">Canadian weather data: Meteorological Service of Canada through Open-Meteo.com</p>
+            <p>U.S. weather data: National Oceanic and Atmospheric Administration through Open-Meteo.com</p>
+            <p class="mb-2">Canadian weather data: Environment and Climate Change Canada (Government of Canada) through Open-Meteo.com</p>
             <p class="text-xs mt-3 text-gray-500">Contains information licensed under Canada's Open Government Licence</p>
-            <p class="text-xs text-gray-500">Wait times are estimates and may vary.</p>
-            <p class="text-xs text-gray-500">This is an unofficial third-party application and is not endorsed by CBP or CBSA.</p>
+            <p class="text-xs text-gray-500">Wait times are estimates and may vary</p>
+            <p class="text-xs text-gray-500">This is an unofficial third-party application and is not endorsed by any government agency</p>
         </div>
     </div>
 
@@ -176,14 +205,44 @@
         function parseWaitTime(time) {
             if (!time || time === 'N/A' || time === '--' || time === 'Not Applicable') return -1;
             if (time === 'No Delay') return 0;
-            const match = time.match(/(\d+)/);
-            return match ? parseInt(match[1]) : -1;
+            
+            // Handle formats like "1 hour 5 minutes", "1h 5m", "65 minutes", etc.
+            const hourMatch = time.match(/(\d+)\s*(?:hour|hr|h)(?!:)/i);
+            const minuteMatch = time.match(/(\d+)\s*(?:minute|min|m)(?!onth)/i);
+            
+            let totalMinutes = 0;
+            
+            if (hourMatch) {
+                totalMinutes += parseInt(hourMatch[1]) * 60;
+            }
+            
+            if (minuteMatch) {
+                totalMinutes += parseInt(minuteMatch[1]);
+            }
+            
+            // If no hour or minute match, try to extract just a number (for backward compatibility)
+            if (totalMinutes === 0) {
+                const match = time.match(/(\d+)/);
+                if (match) {
+                    totalMinutes = parseInt(match[1]);
+                }
+            }
+            
+            return totalMinutes > 0 ? totalMinutes : -1;
         }
 
         function formatWaitTime(time) {
             const minutes = parseWaitTime(time);
             if (minutes === -1) return 'N/A';
             if (minutes === 0) return 'No delay';
+            if (minutes >= 60) {
+                const hours = Math.floor(minutes / 60);
+                const mins = minutes % 60;
+                if (mins === 0) {
+                    return `${hours} ${hours === 1 ? 'hour' : 'hours'}`;
+                }
+                return `${hours} ${hours === 1 ? 'hour' : 'hours'} ${mins} min`;
+            }
             return `${minutes} min`;
         }
 
@@ -453,7 +512,7 @@
                             ${renderUSCard(usPort, pair, index)}
                             ${renderCanadaCard(canadaPort, pair, index)}
                         </div>
-                        ${index < CROSSING_PAIRS.length - 1 ? '<div class="border-t-2 border-gray-200 my-6"></div>' : ''}
+                        ${index < CROSSING_PAIRS.length - 1 ? '<div class="border-t-2 border-gray-200 my-6"></div>' : '<div class="border-t-2 border-gray-200 my-6"></div>'}
                     </div>
                 `;
             }).join('');
