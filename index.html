@@ -15,9 +15,13 @@
         html {
             scroll-behavior: smooth;
         }
+        body {
+            background: linear-gradient(to bottom right, #4a90e2, #e74c3c);
+            min-height: 100vh;
+        }
     </style>
 </head>
-<body class="bg-gradient-to-br from-slate-50 to-cyan-100 min-h-screen p-4">
+<body class="p-4">
     <div class="max-w-6xl mx-auto">
         <!-- Header -->
         <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
@@ -73,19 +77,19 @@
             <h2 class="text-2xl font-bold text-gray-900 mb-4">How it works</h2>
             <div class="text-gray-700 space-y-4">
                 <p>
-                    My name is Benjamin Payne, and I live in Bellingham, Washington. After having moved here in 2025, I realized that there existed no centralized portal to check wait times at all five ports of entry along the U.S-Canada border in Whatcom County. So, I designed this web app. It pulls the latest available waiting time estimate data from both the U.S. and Canadian governments, and presents them in a clean layout.
+                    My name is Benjamin Payne, and I live in Bellingham, Washington. After having moved here in 2025, I realized that there existed no centralized portal to check wait times at all five ports of entry along the U.S-Canada border in Whatcom County. So, I designed this web app. It pulls the latest available waiting time data from both the U.S. and Canadian governments — plus traffic cam images and current weather conditions — and presents it all in a clean layout.
                 </p>
                 <p>
-                    I will always make sure this app is free, but if you'd like, you can
+                    I will always make sure this app is free, but if you'd like, you can…
                 </p>
                 <div class="flex justify-center my-4">
                     <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="benjaminpayne" data-color="#FFDD00" data-emoji=""  data-font="Cookie" data-text="Buy me a coffee" data-outline-color="#000000" data-font-color="#000000" data-coffee-color="#ffffff" ></script>
                 </div>
                 <p class="text-center text-sm text-gray-600">
-                    (this is the Pacific Northwest, after all ☕)
+                    (after all, this is the Pacific Northwest ☕)
                 </p>
                 <p>
-                    If you have any suggestions on how this tool could be improved, please feel free to <a href="mailto:benjaminthomaspayne@gmail.com" class="text-blue-600 hover:text-blue-800 underline">email me here</a>. I enjoy tinkering with the code to improve the app's look, feel, and functionality. For example, I recently added weather conditions at each of the crossing locations, using an open-source tool called Open-Meteo that pulls from various national weather services.
+                    If you have any suggestions on how this tool could be improved, please feel free to <a href="mailto:benjaminthomaspayne@gmail.com" class="text-blue-600 hover:text-blue-800 underline">email me here</a>. I enjoy tinkering with the code to improve the app's look, feel, and functionality.
                 </p>
             </div>
         </div>
@@ -93,11 +97,12 @@
         <!-- Footer -->
         <div class="mt-6 bg-white rounded-xl shadow-lg p-4 text-center text-sm text-gray-600">
             <p class="font-semibold mb-2">Data Sources & Attribution</p>
-            <p>App created by Benjamin Payne. © 2026</p>
-            <p>U.S.-bound wait time data: U.S. Customs and Border Protection (CBP)</p>
-            <p>Canada-bound wait time data: Canada Border Services Agency (CBSA)</p>
-            <p>U.S. weather data: National Oceanic and Atmospheric Administration through Open-Meteo.com</p>
-            <p class="mb-2">Canadian weather data: Environment and Climate Change Canada (Government of Canada) through Open-Meteo.com</p>
+            <p class="mb-3">App designed by Benjamin Payne. © 2026</p>
+            <p>• U.S.-bound wait time data: U.S. Customs and Border Protection (CBP)</p>
+            <p>• Canada-bound wait time data: Canada Border Services Agency (CBSA)</p>
+            <p>• Traffic cam images: BC Ministry of Transportation and Transit, Washington State Department of Transportation</p>
+            <p>• U.S. weather data: National Oceanic and Atmospheric Administration through Open-Meteo.com</p>
+            <p class="mb-2">• Canadian weather data: Environment and Climate Change Canada (Government of Canada) through Open-Meteo.com</p>
             <p class="text-xs mt-3 text-gray-500">Contains information licensed under Canada's Open Government Licence</p>
             <p class="text-xs text-gray-500">Wait times are estimates and may vary</p>
             <p class="text-xs text-gray-500">This is an unofficial third-party application and is not endorsed by any government agency</p>
@@ -105,7 +110,7 @@
     </div>
 
     <script>
-        // Crossing pairs configuration with coordinates
+        // Crossing pairs configuration with coordinates and traffic cam URLs
         const CROSSING_PAIRS = [
             {
                 header: 'Peace Arch crossing',
@@ -120,7 +125,11 @@
                 canadaLat: 49.0009,
                 canadaLon: -122.7536,
                 showUsCommercial: false,
-                showCanadaCommercial: false
+                showCanadaCommercial: false,
+                usCamUrl: 'https://www.drivebc.ca/images/13.jpg',
+                usCamCaption: 'U.S.-bound traffic approaching the Peace Arch crossing',
+                canadaCamUrl: 'https://images.wsdot.wa.gov/nw/005vc27650.jpg',
+                canadaCamCaption: 'Canada-bound traffic approaching the Peace Arch crossing'
             },
             {
                 header: 'Pacific Highway crossing',
@@ -135,7 +144,11 @@
                 canadaLat: 49.0020,
                 canadaLon: -122.7353,
                 showUsCommercial: true,
-                showCanadaCommercial: true
+                showCanadaCommercial: true,
+                usCamUrl: 'https://www.drivebc.ca/images/15.jpg',
+                usCamCaption: 'U.S.-bound traffic approaching the Pacific Highway crossing',
+                canadaCamUrl: 'https://images.wsdot.wa.gov/nw/543vc00098.jpg?a=1771200010409',
+                canadaCamCaption: 'Canada-bound traffic approaching the Pacific Highway crossing'
             },
             {
                 header: 'Lynden crossing',
@@ -150,7 +163,11 @@
                 canadaLat: 49.0019,
                 canadaLon: -122.4852,
                 showUsCommercial: true,
-                showCanadaCommercial: true
+                showCanadaCommercial: true,
+                usCamUrl: 'https://www.drivebc.ca/images/169.jpg?t=1771200048',
+                usCamCaption: 'U.S.-bound traffic approaching the Lynden crossing',
+                canadaCamUrl: 'https://images.wsdot.wa.gov/nw/539vc01510.jpg?a=1771200030629',
+                canadaCamCaption: 'Canada-bound traffic approaching the Lynden crossing'
             },
             {
                 header: 'Sumas crossing',
@@ -165,7 +182,11 @@
                 canadaLat: 49.0022,
                 canadaLon: -122.2654,
                 showUsCommercial: true,
-                showCanadaCommercial: true
+                showCanadaCommercial: true,
+                usCamUrl: 'https://www.drivebc.ca/images/170.jpg',
+                usCamCaption: 'U.S.-bound traffic approaching the Sumas crossing',
+                canadaCamUrl: 'https://images.wsdot.wa.gov/nw/009vc09781.jpg?a=1771200235232',
+                canadaCamCaption: 'Canada-bound traffic approaching the Sumas crossing'
             },
             {
                 header: 'Point Roberts crossing',
@@ -180,7 +201,9 @@
                 canadaLat: 49.0019,
                 canadaLon: -123.0679,
                 showUsCommercial: true,
-                showCanadaCommercial: true
+                showCanadaCommercial: true,
+                usCamUrl: null,
+                canadaCamUrl: null
             }
         ];
 
@@ -190,7 +213,6 @@
 
         function hasCanadaData(port) {
             if (!port) return false;
-            // Check if we have any valid wait time data (not N/A, not empty, not dashes)
             const hasStandard = port.travellersCanada && 
                                port.travellersCanada !== 'N/A' && 
                                port.travellersCanada !== '--' && 
@@ -206,7 +228,6 @@
             if (!time || time === 'N/A' || time === '--' || time === 'Not Applicable') return -1;
             if (time === 'No Delay') return 0;
             
-            // Handle formats like "1 hour 5 minutes", "1h 5m", "65 minutes", etc.
             const hourMatch = time.match(/(\d+)\s*(?:hour|hr|h)(?!:)/i);
             const minuteMatch = time.match(/(\d+)\s*(?:minute|min|m)(?!onth)/i);
             
@@ -220,7 +241,6 @@
                 totalMinutes += parseInt(minuteMatch[1]);
             }
             
-            // If no hour or minute match, try to extract just a number (for backward compatibility)
             if (totalMinutes === 0) {
                 const match = time.match(/(\d+)/);
                 if (match) {
@@ -256,7 +276,6 @@
         }
 
         function getWeatherEmoji(code) {
-            // WMO Weather codes
             if (code === 0) return '☀️';
             if (code === 1 || code === 2) return '🌤️';
             if (code === 3) return '☁️';
@@ -289,14 +308,11 @@
 
         async function fetchWeather() {
             try {
-                // Fetch weather for all unique locations
                 const weatherPromises = CROSSING_PAIRS.map(async pair => {
-                    // Fetch US weather
                     const usUrl = `https://api.open-meteo.com/v1/forecast?latitude=${pair.usLat}&longitude=${pair.usLon}&current=temperature_2m,weather_code&temperature_unit=fahrenheit&timezone=America/Los_Angeles`;
                     const usResponse = await fetch(usUrl);
                     const usData = await usResponse.json();
 
-                    // Fetch Canada weather
                     const canadaUrl = `https://api.open-meteo.com/v1/forecast?latitude=${pair.canadaLat}&longitude=${pair.canadaLon}&current=temperature_2m,weather_code&temperature_unit=celsius&timezone=America/Vancouver`;
                     const canadaResponse = await fetch(canadaUrl);
                     const canadaData = await canadaResponse.json();
@@ -338,6 +354,15 @@
         }
 
         function renderUSCard(port, pair, pairIndex) {
+            const trafficCamHtml = pair.usCamUrl 
+                ? `
+                    <div class="mt-3">
+                        <img src="${pair.usCamUrl}" alt="Traffic camera" class="w-full rounded border border-gray-300" onerror="this.style.display='none'">
+                        <p class="text-xs text-gray-500 mt-1">${pair.usCamCaption}</p>
+                    </div>
+                `
+                : `<p class="text-xs text-gray-500 mt-3">No traffic cams posted at Point Roberts crossing</p>`;
+
             if (!port) {
                 return `
                     <div class="bg-white rounded-lg p-4 shadow-md">
@@ -362,6 +387,7 @@
                             </span>
                         </div>
                         <p class="text-sm text-gray-500">Wait time data unavailable</p>
+                        ${trafficCamHtml}
                     </div>
                 `;
             }
@@ -413,11 +439,21 @@
                         </div>
                         ` : ''}
                     </div>
+                    ${trafficCamHtml}
                 </div>
             `;
         }
 
         function renderCanadaCard(port, pair, pairIndex) {
+            const trafficCamHtml = pair.canadaCamUrl 
+                ? `
+                    <div class="mt-3">
+                        <img src="${pair.canadaCamUrl}" alt="Traffic camera" class="w-full rounded border border-gray-300" onerror="this.style.display='none'">
+                        <p class="text-xs text-gray-500 mt-1">${pair.canadaCamCaption}</p>
+                    </div>
+                `
+                : `<p class="text-xs text-gray-500 mt-3">No traffic cams posted at Point Roberts crossing</p>`;
+
             if (!port || !hasCanadaData(port)) {
                 return `
                     <div class="bg-white rounded-lg p-4 shadow-md">
@@ -442,6 +478,7 @@
                             </span>
                         </div>
                         <p class="text-sm text-gray-500">Wait time data unavailable</p>
+                        ${trafficCamHtml}
                     </div>
                 `;
             }
@@ -491,6 +528,7 @@
                         </div>
                         ` : ''}
                     </div>
+                    ${trafficCamHtml}
                 </div>
             `;
         }
@@ -528,10 +566,8 @@
             errorMessage.classList.add('hidden');
 
             try {
-                // Fetch weather data first
                 await fetchWeather();
 
-                // Fetch Canada-bound data via Netlify Function
                 const cbsaUrl = encodeURIComponent('https://www.cbsa-asfc.gc.ca/bwt-taf/bwt-eng.csv');
                 const cbsaRes = await fetch(`/.netlify/functions/border-data?url=${cbsaUrl}`);
                 
@@ -553,7 +589,6 @@
                     };
                 });
 
-                // Fetch U.S.-bound data via Netlify Function
                 const cbpUrl = encodeURIComponent('https://bwt.cbp.gov/xml/bwt.xml');
                 const cbpRes = await fetch(`/.netlify/functions/border-data?url=${cbpUrl}`);
                 
@@ -602,10 +637,7 @@
             }
         }
 
-        // Initial load
         fetchData();
-
-        // Auto-refresh every 5 minutes
         setInterval(fetchData, 300000);
     </script>
 </body>
