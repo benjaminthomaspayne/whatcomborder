@@ -16,7 +16,7 @@
             scroll-behavior: smooth;
         }
         body {
-            background: linear-gradient(to bottom right, #4a90e2, #e74c3c);
+            background-color: #64B5F6;
             min-height: 100vh;
         }
         .traffic-cam-container {
@@ -34,7 +34,7 @@
     </style>
 </head>
 <body class="p-4">
-    <div class="max-w-6xl mx-auto">
+    <div class="max-w-6xl mx-auto" id="top">
         <!-- Header -->
         <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
             <div class="flex items-center justify-between mb-4">
@@ -79,6 +79,14 @@
             <p class="text-gray-600">Loading border wait times...</p>
         </div>
 
+        <!-- NOTE Section -->
+        <div id="noteSection" class="hidden mb-6">
+            <p class="text-white text-sm text-center mb-4">
+                NOTE: Wait times are estimates only, provided by the U.S. and Canadian federal governments. Additionally, I have included links to DriveBC, a service of the BC Ministry of Transportation and Transit. Each DriveBC link corresponds to that particular crossing, and gives estimates for both southbound (U.S.-bound) and northbound (Canada-bound) traffic.
+            </p>
+            <div class="border-t-2 border-white"></div>
+        </div>
+
         <!-- Content - Paired Crossings -->
         <div id="content" class="hidden space-y-6">
             <!-- Pairs will be inserted here -->
@@ -103,6 +111,9 @@
                 <p>
                     If you have any suggestions on how this tool could be improved, please feel free to <a href="mailto:benjaminthomaspayne@gmail.com" class="text-blue-600 hover:text-blue-800 underline">email me here</a>. I enjoy tinkering with the code to improve the app's look, feel, and functionality.
                 </p>
+                <p class="text-center mt-4">
+                    <a href="#top" class="text-blue-600 hover:text-blue-800 underline">(Back to top)</a>
+                </p>
             </div>
         </div>
 
@@ -126,14 +137,14 @@
         const CROSSING_PAIRS = [
             {
                 header: 'Peace Arch crossing',
-                subhead: 'Along Interstate 5 (I-5) in Washington and Highway 99 in British Columbia. No commercial vehicles (e.g., semis) allowed. Open 24/7.',
+                subhead: 'Along Interstate 5 (I-5) in Washington and Highway 99 in British Columbia. No commercial vehicles (e.g., semis) allowed. Open 24/7. (<a href="https://www.drivebc.ca/?type=borderCrossing&id=134" target="_blank" class="text-cyan-200 hover:text-white underline">Click here</a> for this crossing\'s wait time info on DriveBC.)',
                 usName: 'Blaine',
                 usCrossing: 'Peace Arch',
-                usDisplay: 'Blaine, WA',
+                usDisplay: 'Entering Blaine, WA',
                 usLat: 49.0009,
                 usLon: -122.7536,
                 canadaFilter: 'Douglas',
-                canadaDisplay: 'Surrey/Douglas/White Rock, BC',
+                canadaDisplay: 'Entering Surrey/Douglas/White Rock, BC',
                 canadaLat: 49.0009,
                 canadaLon: -122.7536,
                 showUsCommercial: false,
@@ -145,71 +156,71 @@
             },
             {
                 header: 'Pacific Highway crossing',
-                subhead: 'Along State Route 543 in Washington and Highway 15 in British Columbia (collectively referred to locally as Pacific Highway). Located about 1 mile east of the Peace Arch crossing. Commonly known as "the truck crossing," but it can also process passenger vehicles. Open 24/7.',
+                subhead: 'Along State Route 543 in Washington and Highway 15 in British Columbia (collectively referred to locally as Pacific Highway). Located about 1 mile east of the Peace Arch crossing. Commonly known as "the truck crossing," but it can also process passenger vehicles. Open 24/7. (<a href="https://www.drivebc.ca/?type=borderCrossing&id=135" target="_blank" class="text-cyan-200 hover:text-white underline">Click here</a> for this crossing\'s wait time info on DriveBC.)',
                 usName: 'Blaine',
                 usCrossing: 'Pacific Highway',
-                usDisplay: 'Blaine, WA',
+                usDisplay: 'Entering Blaine, WA',
                 usLat: 49.0020,
                 usLon: -122.7353,
                 canadaFilter: 'Pacific Highway',
-                canadaDisplay: 'Surrey/Douglas/White Rock, BC',
+                canadaDisplay: 'Entering Surrey/Douglas/White Rock, BC',
                 canadaLat: 49.0020,
                 canadaLon: -122.7353,
                 showUsCommercial: true,
                 showCanadaCommercial: true,
                 usCamUrl: 'https://www.drivebc.ca/images/15.jpg',
                 usCamCaption: 'U.S.-bound traffic approaching the Pacific Highway crossing',
-                canadaCamUrl: 'https://images.wsdot.wa.gov/nw/543vc00098.jpg?a=1771200010409',
+                canadaCamUrl: 'https://images.wsdot.wa.gov/nw/543vc00098.jpg',
                 canadaCamCaption: 'Canada-bound traffic approaching the Pacific Highway crossing'
             },
             {
                 header: 'Lynden crossing',
-                subhead: 'Along State Route 539 (Guide Meridian Road) in Washington and Highway 13 (Diversion Street) in British Columbia. Open 8 a.m. to midnight.',
+                subhead: 'Along State Route 539 (Guide Meridian Road) in Washington and Highway 13 (Diversion Street) in British Columbia. Open 8 a.m. to midnight. (<a href="https://www.drivebc.ca/?type=borderCrossing&id=136" target="_blank" class="text-cyan-200 hover:text-white underline">Click here</a> for this crossing\'s wait time info on DriveBC.)',
                 usName: 'Lynden',
                 usCrossing: null,
-                usDisplay: 'Lynden, WA',
+                usDisplay: 'Entering Lynden, WA',
                 usLat: 49.0019,
                 usLon: -122.4852,
                 canadaFilter: 'Aldergrove',
-                canadaDisplay: 'Langley Township/Aldergrove, BC',
+                canadaDisplay: 'Entering Langley Township/Aldergrove, BC',
                 canadaLat: 49.0019,
                 canadaLon: -122.4852,
                 showUsCommercial: true,
                 showCanadaCommercial: true,
-                usCamUrl: 'https://www.drivebc.ca/images/169.jpg?t=1771200048',
+                usCamUrl: 'https://www.drivebc.ca/images/169.jpg',
                 usCamCaption: 'U.S.-bound traffic approaching the Lynden crossing',
-                canadaCamUrl: 'https://images.wsdot.wa.gov/nw/539vc01510.jpg?a=1771200030629',
+                canadaCamUrl: 'https://images.wsdot.wa.gov/nw/539vc01510.jpg',
                 canadaCamCaption: 'Canada-bound traffic approaching the Lynden crossing'
             },
             {
                 header: 'Sumas crossing',
-                subhead: 'Along State Route 9 (Cherry Street) in Washington and Highway 11 (Sumas Way) in British Columbia. Open 24/7.',
+                subhead: 'Along State Route 9 (Cherry Street) in Washington and Highway 11 (Sumas Way) in British Columbia. Open 24/7. (<a href="https://www.drivebc.ca/?type=borderCrossing&id=137" target="_blank" class="text-cyan-200 hover:text-white underline">Click here</a> for this crossing\'s wait time info on DriveBC.)',
                 usName: 'Sumas',
                 usCrossing: null,
-                usDisplay: 'Sumas, WA',
+                usDisplay: 'Entering Sumas, WA',
                 usLat: 49.0022,
                 usLon: -122.2654,
                 canadaFilter: 'Abbotsford-Huntingdon',
-                canadaDisplay: 'Abbotsford/Huntingdon, BC',
+                canadaDisplay: 'Entering Abbotsford/Huntingdon, BC',
                 canadaLat: 49.0022,
                 canadaLon: -122.2654,
                 showUsCommercial: true,
                 showCanadaCommercial: true,
                 usCamUrl: 'https://www.drivebc.ca/images/170.jpg',
                 usCamCaption: 'U.S.-bound traffic approaching the Sumas crossing',
-                canadaCamUrl: 'https://images.wsdot.wa.gov/nw/009vc09781.jpg?a=1771200235232',
+                canadaCamUrl: 'https://images.wsdot.wa.gov/nw/009vc09781.jpg',
                 canadaCamCaption: 'Canada-bound traffic approaching the Sumas crossing'
             },
             {
                 header: 'Point Roberts crossing',
-                subhead: 'Along Tyee Drive in Point Roberts and 56th Street in Tsawwassen. Open 24/7.',
+                subhead: 'Along Tyee Drive in Point Roberts and 56th Street in Tsawwassen. Open 24/7. (No info available for this crossing on DriveBC.)',
                 usName: 'Blaine',
                 usCrossing: 'Point Roberts',
-                usDisplay: 'Point Roberts, WA',
+                usDisplay: 'Entering Point Roberts, WA',
                 usLat: 49.0019,
                 usLon: -123.0679,
                 canadaFilter: 'Boundary Bay',
-                canadaDisplay: 'Delta/Tsawwassen, BC',
+                canadaDisplay: 'Entering Delta/Tsawwassen, BC',
                 canadaLat: 49.0019,
                 canadaLon: -123.0679,
                 showUsCommercial: true,
@@ -366,16 +377,17 @@
         }
 
         function renderUSCard(port, pair, pairIndex) {
+            const timestamp = new Date().getTime();
             const trafficCamHtml = pair.usCamUrl 
                 ? `
                     <div class="mt-3">
                         <div class="traffic-cam-container rounded border border-gray-300">
-                            <img src="${pair.usCamUrl}" alt="Traffic camera" onerror="this.style.display='none'">
+                            <img src="${pair.usCamUrl}?t=${timestamp}" alt="Traffic camera" onerror="this.style.display='none'">
                         </div>
                         <p class="text-xs text-gray-500 mt-1">${pair.usCamCaption}</p>
                     </div>
                 `
-                : `<p class="text-xs text-gray-500 mt-3">No traffic cams posted at Point Roberts crossing</p>`;
+                : `<p class="text-xs text-gray-500 mt-3">No traffic cams posted at the Point Roberts crossing</p>`;
 
             if (!port) {
                 return `
@@ -459,16 +471,17 @@
         }
 
         function renderCanadaCard(port, pair, pairIndex) {
+            const timestamp = new Date().getTime();
             const trafficCamHtml = pair.canadaCamUrl 
                 ? `
                     <div class="mt-3">
                         <div class="traffic-cam-container rounded border border-gray-300">
-                            <img src="${pair.canadaCamUrl}" alt="Traffic camera" onerror="this.style.display='none'">
+                            <img src="${pair.canadaCamUrl}?t=${timestamp}" alt="Traffic camera" onerror="this.style.display='none'">
                         </div>
                         <p class="text-xs text-gray-500 mt-1">${pair.canadaCamCaption}</p>
                     </div>
                 `
-                : `<p class="text-xs text-gray-500 mt-3">No traffic cams posted at Point Roberts crossing</p>`;
+                : `<p class="text-xs text-gray-500 mt-3">No traffic cams posted at the Point Roberts crossing</p>`;
 
             if (!port || !hasCanadaData(port)) {
                 return `
@@ -551,6 +564,7 @@
 
         function renderData() {
             const content = document.getElementById('content');
+            const noteSection = document.getElementById('noteSection');
             
             content.innerHTML = CROSSING_PAIRS.map((pair, index) => {
                 const usPort = findUSPort(pair);
@@ -559,17 +573,19 @@
                 return `
                     <div>
                         <div class="mb-3 text-center">
-                            <h2 class="text-lg font-extrabold text-gray-900 underline mb-1">${pair.header}</h2>
-                            <p class="text-sm font-extrabold text-gray-900">${pair.subhead}</p>
+                            <h2 class="text-lg font-extrabold text-white underline mb-1">${pair.header}</h2>
+                            <p class="text-sm font-extrabold text-white">${pair.subhead}</p>
                         </div>
                         <div class="grid md:grid-cols-2 gap-3 md:gap-4">
                             ${renderUSCard(usPort, pair, index)}
                             ${renderCanadaCard(canadaPort, pair, index)}
                         </div>
-                        ${index < CROSSING_PAIRS.length - 1 ? '<div class="border-t-2 border-gray-200 my-6"></div>' : '<div class="border-t-2 border-gray-200 my-6"></div>'}
+                        ${index < CROSSING_PAIRS.length - 1 ? '<div class="border-t-2 border-white my-6"></div>' : '<div class="border-t-2 border-white my-6"></div>'}
                     </div>
                 `;
             }).join('');
+            
+            noteSection.classList.remove('hidden');
         }
 
         async function fetchData() {
