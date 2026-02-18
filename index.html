@@ -3,7 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Whatcom County border crossing wait times</title>
+    <title>Whatcom County - British Columbia border crossing tracker</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://whatcomborder.netlify.app/">
+    <meta property="og:title" content="Whatcom-BC Border Crossing Tracker">
+    <meta property="og:description" content="Track all border crossings between Whatcom County, Washington and British Columbia">
+    <meta property="og:image" content="https://whatcomborder.netlify.app/og-image.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://whatcomborder.netlify.app/">
+    <meta property="twitter:title" content="Whatcom-BC Border Crossing Tracker">
+    <meta property="twitter:description" content="Track all border crossings between Whatcom County, Washington and British Columbia">
+    <meta property="twitter:image" content="https://whatcomborder.netlify.app/og-image.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @keyframes spin {
@@ -16,7 +36,7 @@
             scroll-behavior: smooth;
         }
         body {
-            background-color: #64B5F6;
+            background: linear-gradient(to bottom right, #0f766e, #059669);
             min-height: 100vh;
         }
         .traffic-cam-container {
@@ -31,16 +51,49 @@
             width: auto;
             max-width: 100%;
         }
+        
+        /* Desktop: keep button on right */
+        @media (min-width: 768px) {
+            .header-content {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 1rem;
+            }
+            .header-text {
+                flex: 1;
+            }
+            .refresh-btn-container {
+                flex-shrink: 0;
+            }
+        }
+        
+        /* Mobile: stack everything, button at bottom full-width */
+        @media (max-width: 767px) {
+            .header-content {
+                display: block;
+            }
+            .header-text {
+                margin-bottom: 1rem;
+            }
+            .refresh-btn-container {
+                width: 100%;
+            }
+            .refresh-btn-container button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body class="p-4">
     <div class="max-w-6xl mx-auto" id="top">
         <!-- Header -->
         <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-            <div class="flex items-center justify-between mb-4">
-                <div>
+            <div class="header-content">
+                <div class="header-text">
                     <h1 class="text-3xl font-bold text-gray-900 mb-2">
-                        Whatcom County border crossing wait times
+                        Whatcom County - British Columbia border crossing tracker
                     </h1>
                     <p class="text-gray-600">A free and simple tool to track all of Whatcom County, Washington's border crossing wait times — in both directions 
                         <img src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/svg/1f1fa-1f1f8.svg" width="16" height="16" alt="US Flag" class="inline-block">
@@ -50,12 +103,14 @@
                         <a href="#how-it-works" class="text-blue-600 hover:text-blue-800 underline">How it works</a>
                     </p>
                 </div>
-                <button onclick="fetchData()" id="refreshBtn" class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                    <svg id="refreshIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                    </svg>
-                    Refresh
-                </button>
+                <div class="refresh-btn-container">
+                    <button onclick="fetchData()" id="refreshBtn" class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                        <svg id="refreshIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        Refresh
+                    </button>
+                </div>
             </div>
             
             <div id="lastUpdate" class="flex items-center gap-2 text-sm text-gray-500 hidden">
@@ -82,7 +137,7 @@
         <!-- NOTE Section -->
         <div id="noteSection" class="hidden mb-6">
             <p class="text-white text-sm text-center mb-4">
-                NOTE: Wait times are estimates only, provided by the U.S. and Canadian federal governments. Additionally, I have included links to DriveBC, a service of the BC Ministry of Transportation and Transit. Each DriveBC link corresponds to that particular crossing, and gives estimates for both southbound (U.S.-bound) and northbound (Canada-bound) traffic.
+                NOTE: Wait times are estimates provided by the U.S. and Canadian federal governments. Additionally, I have included links to DriveBC, a service of the BC Ministry of Transportation and Transit. Each DriveBC link corresponds to that particular crossing, and gives estimates for both southbound (U.S.-bound) and northbound (Canada-bound) traffic using data from the Whatcom Council of Governments, a transportation planning agency.
             </p>
             <div class="border-t-2 border-white"></div>
         </div>
@@ -97,7 +152,7 @@
             <h2 class="text-2xl font-bold text-gray-900 mb-4">How it works</h2>
             <div class="text-gray-700 space-y-4">
                 <p>
-                    My name is Benjamin Payne, and I live in Bellingham, Washington. After having moved here in 2025, I realized that there existed no centralized portal to check wait times at all five ports of entry along the U.S-Canada border in Whatcom County. So, I designed this web app. It pulls the latest available waiting time data from both the U.S. and Canadian governments — plus traffic cam images and current weather conditions — and presents it all in a clean layout.
+                    My name is Benjamin Payne, and I live in Bellingham, Washington. After having moved here in 2025, I realized that there existed no centralized portal to check wait times at all five ports of entry along the U.S.-Canada border in Whatcom County. So, I designed this web app. It pulls the latest available waiting time data from both the U.S. and Canadian governments — plus traffic cam images and current weather conditions — and presents it all in a clean layout.
                 </p>
                 <p>
                     I will always make sure this app is free, but if you'd like, you can…
@@ -120,7 +175,7 @@
         <!-- Footer -->
         <div class="mt-6 bg-white rounded-xl shadow-lg p-4 text-center text-sm text-gray-600">
             <p class="font-semibold mb-2">Data Sources & Attribution</p>
-            <p class="mb-3">App designed by Benjamin Payne. © 2026</p>
+            <p class="mb-3">App designed by <a href="https://btpayne.com/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline">Benjamin Payne</a>. © 2026</p>
             <p>• U.S.-bound wait time data: U.S. Customs and Border Protection (CBP)</p>
             <p>• Canada-bound wait time data: Canada Border Services Agency (CBSA)</p>
             <p>• Traffic cam images: BC Ministry of Transportation and Transit, Washington State Department of Transportation</p>
@@ -378,16 +433,19 @@
 
         function renderUSCard(port, pair, pairIndex) {
             const timestamp = new Date().getTime();
+            const isPointRoberts = pair.header === 'Point Roberts crossing';
+            const captionAlign = isPointRoberts ? 'text-left' : 'text-center';
+            
             const trafficCamHtml = pair.usCamUrl 
                 ? `
                     <div class="mt-3">
                         <div class="traffic-cam-container rounded border border-gray-300">
                             <img src="${pair.usCamUrl}?t=${timestamp}" alt="Traffic camera" onerror="this.style.display='none'">
                         </div>
-                        <p class="text-xs text-gray-500 mt-1">${pair.usCamCaption}</p>
+                        <p class="text-xs text-gray-500 mt-1 ${captionAlign}">${pair.usCamCaption}</p>
                     </div>
                 `
-                : `<p class="text-xs text-gray-500 mt-3">No traffic cams posted at the Point Roberts crossing</p>`;
+                : `<p class="text-xs text-gray-500 mt-3 text-left">No traffic cams posted at the Point Roberts crossing</p>`;
 
             if (!port) {
                 return `
@@ -472,16 +530,19 @@
 
         function renderCanadaCard(port, pair, pairIndex) {
             const timestamp = new Date().getTime();
+            const isPointRoberts = pair.header === 'Point Roberts crossing';
+            const captionAlign = isPointRoberts ? 'text-left' : 'text-center';
+            
             const trafficCamHtml = pair.canadaCamUrl 
                 ? `
                     <div class="mt-3">
                         <div class="traffic-cam-container rounded border border-gray-300">
                             <img src="${pair.canadaCamUrl}?t=${timestamp}" alt="Traffic camera" onerror="this.style.display='none'">
                         </div>
-                        <p class="text-xs text-gray-500 mt-1">${pair.canadaCamCaption}</p>
+                        <p class="text-xs text-gray-500 mt-1 ${captionAlign}">${pair.canadaCamCaption}</p>
                     </div>
                 `
-                : `<p class="text-xs text-gray-500 mt-3">No traffic cams posted at the Point Roberts crossing</p>`;
+                : `<p class="text-xs text-gray-500 mt-3 text-left">No traffic cams posted at the Point Roberts crossing</p>`;
 
             if (!port || !hasCanadaData(port)) {
                 return `
