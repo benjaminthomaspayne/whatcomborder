@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles for BorderBug */
+body {
+    scroll-behavior: smooth;
+}
+
+.traffic-cam-container {
+    height: 249px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.traffic-cam-container img {
+    max-height: 249px;
+    width: auto;
+    max-width: 100%;
+}

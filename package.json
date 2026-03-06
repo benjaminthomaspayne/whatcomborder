@@ -1,0 +1,12 @@
+{
+  "name": "borderbug",
+  "version": "2.0.0",
+  "description": "BorderBug - Whatcom County border crossing wait times tracker",
+  "scripts": {
+    "build:css": "tailwindcss -i ./src/input.css -o ./dist/output.css --minify",
+    "watch:css": "tailwindcss -i ./src/input.css -o ./dist/output.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}

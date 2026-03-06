@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>BorderBug | Live Border Wait Times Whatcom County & BC</title>
+    <meta name="description" content="Check real-time border crossing wait times for Whatcom County and BC. Get live updates for Peace Arch, Pacific Highway, Lynden, and Sumas to save time on your trip.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://borderbug.netlify.app/">
+    <meta property="og:title" content="BorderBug | Whatcom County Border Wait Times">
+    <meta property="og:description" content="Don't get stuck in traffic. Check live wait times for Peace Arch, Sumas, and more.">
+    <meta property="og:image" content="https://borderbug.netlify.app/og-image.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://borderbug.netlify.app/">
+    <meta property="twitter:title" content="BorderBug | Whatcom County Border Wait Times">
+    <meta property="twitter:description" content="Don't get stuck in traffic. Check live wait times for Peace Arch, Sumas, and more.">
+    <meta property="twitter:image" content="https://borderbug.netlify.app/og-image.png">
+    
+    <!-- Tailwind CSS - Production build -->
+    <link rel="stylesheet" href="/dist/output.css">
+    
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, sans-serif;
+            background: linear-gradient(135deg, #064e3b 0%, #022c22 100%);
+            color: white;
+        }
+
+        .title-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .refresh-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #fbbf24;
+            color: #064e3b;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+            transition: all 0.2s;
+        }
+
+        .refresh-btn:hover {
+            background: #f59e0b;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(251, 191, 36, 0.4);
+        }
+
+        .note-section {
+            background: rgba(251, 191, 36, 0.15);
+            border: 2px solid rgba(251, 191, 36, 0.3);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .note-section strong {
+            color: #fbbf24;
+        }
+
+        .divider {
+            height: 2px;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .crossing-header h2 {
+            color: #fbbf24;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+        }
+
+        .crossing-header a {
+            color: #fbbf24;
+            text-decoration: underline;
+        }
+
+        .wait-card {
+            background: rgba(255, 255, 255, 0.06);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-open {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .status-closed {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .wait-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0.6;
+            font-weight: 700;
+        }
+
+        .wait-value {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .wait-green { color: #4ade80; }
+        .wait-yellow { color: #fbbf24; }
+        .wait-red { color: #f87171; }
+        .wait-gray { color: #9ca3af; }
+
+        .source-label {
+            font-size: 11px;
+            opacity: 0.6;
+        }
+
+        .info-section {
+            background: rgba(255, 255, 255, 0.06);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .info-section h2 {
+            color: #fbbf24;
+        }
+
+        .info-section a {
+            color: #fbbf24;
+            text-decoration: underline;
+        }
+
+        .footer {
+            background: rgba(255, 255, 255, 0.04);
+            border: 2px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+        }
+
+        .footer strong {
+            color: #fbbf24;
+        }
+
+        .footer a {
+            color: #fbbf24;
+        }
+
+        .coffee-btn {
+            background: #fbbf24;
+            color: #064e3b;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+            transition: all 0.2s;
+            display: inline-block;
+        }
+
+        .coffee-btn:hover {
+            background: #f59e0b;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(251, 191, 36, 0.4);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+    </style>
+</head>
+<body class="p-4">
+    <div class="max-w-6xl mx-auto" id="top">
+        <!-- Header -->
+        <div class="title-card p-8 mb-6">
+            <h1 class="text-3xl font-bold mb-3" style="letter-spacing: -0.02em;">
+                BorderBug: Whatcom County - British Columbia border crossing tracker
+            </h1>
+            <p class="opacity-85 mb-5 leading-relaxed">A free and simple tool to track all of Whatcom County, Washington's border crossing wait times — in both directions 
+                <img src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/svg/1f1fa-1f1f8.svg" width="16" height="16" alt="US Flag" class="inline-block">
+                <img src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/svg/1f1e8-1f1e6.svg" width="16" height="16" alt="Canada Flag" class="inline-block">
+            </p>
+            <button onclick="fetchData()" id="refreshBtn" class="refresh-btn">
+                <svg id="refreshIcon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                Refresh
+            </button>
+            
+            <div id="lastUpdate" class="hidden mt-4 flex items-center gap-2 text-sm opacity-70">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Last checked: <span id="updateTime"></span>
+            </div>
+
+            <div id="errorMessage" class="hidden mt-4 p-4 bg-red-900 bg-opacity-30 border border-red-500 border-opacity-30 rounded-lg">
+                <p class="font-semibold">Error loading data</p>
+                <p class="text-sm mt-1 opacity-80" id="errorText"></p>
+            </div>
+
+            <p class="mt-5 text-sm">
+                <a href="#how-it-works" style="color: #fbbf24; text-decoration: underline;">How it works</a>
+            </p>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="wait-card p-12 text-center">
+            <svg class="w-12 h-12 animate-spin text-yellow-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+            <p class="opacity-80">Loading border wait times...</p>
+        </div>
+
+        <!-- NOTE Section -->
+        <div id="noteSection" class="hidden note-section p-5 mb-8 text-center text-sm leading-relaxed">
+            <strong>NOTE:</strong> To give users a more complete picture of conditions at the border, this dashboard shows wait times from multiple sources: road sensor data from the Whatcom Council of Governments (a regional transportation planning agency) and estimates from U.S. Customs and Border Protection (U.S.-bound traffic only) and the Canada Border Services Agency (Canada-bound traffic only).
+            <br><br>
+            Because these are different sources with different methodologies, they often differ in what they report.
+        </div>
+
+        <!-- Content - Paired Crossings -->
+        <div id="content" class="hidden space-y-6">
+            <!-- Pairs will be inserted here -->
+        </div>
+
+        <!-- How It Works Section -->
+        <div id="how-it-works" class="info-section p-8 mt-8">
+            <h2 class="text-3xl font-bold mb-5">How it works</h2>
+            <div class="opacity-90 space-y-4 leading-relaxed">
+                <p>
+                    My name is Benjamin Payne, and I live in Bellingham, Washington. After having moved here in 2025, I realized that there existed no online dashboard to check wait times at all five ports of entry along the U.S.-Canada border in Whatcom County. So, I designed this web app. It retrieves the latest available border crossing wait times, traffic cam images, and weather conditions — from a multitude of otherwise messy government datasets — and presents it all in a clean layout.
+                </p>
+                <p>
+                    I will always make sure BorderBug is free, but if you'd like, you can…
+                </p>
+                <div class="text-center my-6">
+                    <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="benjaminpayne" data-color="#FFDD00" data-emoji=""  data-font="Cookie" data-text="Buy me a coffee" data-outline-color="#000000" data-font-color="#000000" data-coffee-color="#ffffff" ></script>
+                </div>
+                <p class="text-center text-sm opacity-70">
+                    (after all, this is the Pacific Northwest ☕)
+                </p>
+                <p>
+                    If you have any suggestions on how this tool could be improved, please feel free to <a href="mailto:benjaminthomaspayne@gmail.com">email me here</a>. I enjoy tinkering with the code to improve the app's look, feel, and functionality.
+                </p>
+                <p class="text-center mt-6">
+                    <a href="#top">(Back to top)</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer p-6 mt-8 text-center text-sm opacity-80 leading-relaxed">
+            <p class="font-semibold mb-3"><strong>Data Sources & Attribution</strong></p>
+            <p class="mb-3">BorderBug designed by <a href="https://btpayne.com/" target="_blank" rel="noopener noreferrer">Benjamin Payne</a>. © 2026</p>
+            <p>• Wait time data: Whatcom Council of Governments (WCOG), U.S. Customs and Border Protection (CBP), Canada Border Services Agency (CBSA)</p>
+            <p>• Traffic cam images: BC Ministry of Transportation and Transit, Washington State Department of Transportation</p>
+            <p class="mb-3">• Weather data: National Oceanic and Atmospheric Administration (NOAA), Environment and Climate Change Canada (Government of Canada) through Open-Meteo.com</p>
+            <p class="text-xs opacity-60 mt-3">Contains information licensed under Canada's Open Government Licence</p>
+            <p class="text-xs opacity-60">Wait times are estimates and may vary</p>
+            <p class="text-xs opacity-60">This is an unofficial third-party application and is not endorsed by any government agency</p>
+        </div>
+    </div>
+
+    <script>
+        // Crossing pairs configuration
+        const CROSSING_PAIRS = [
+            {
+                header: 'Peace Arch crossing',
+                subhead: 'Along Interstate 5 (I-5) in Washington and Highway 99 in British Columbia. No commercial vehicles (e.g., semis) allowed. Open 24/7.',
+                usName: 'Blaine',
+                usCrossing: 'Peace Arch',
+                usDisplay: 'Entering Blaine, WA',
+                usLat: 49.0009,
+                usLon: -122.7536,
+                canadaFilter: 'Douglas',
+                canadaDisplay: 'Entering Surrey/Douglas/White Rock, BC',
+                canadaLat: 49.0009,
+                canadaLon: -122.7536,
+                showUsCommercial: false,
+                showCanadaCommercial: false,
+                usCamUrl: 'https://www.drivebc.ca/images/13.jpg',
+                usCamCaption: 'U.S.-bound traffic approaching the Peace Arch crossing',
+                canadaCamUrl: 'https://images.wsdot.wa.gov/nw/005vc27650.jpg',
+                canadaCamCaption: 'Canada-bound traffic approaching the Peace Arch crossing',
+                wcogIds: {
+                    us: { standard: 4, nexus: 11 },
+                    canada: { standard: 5, nexus: 6 }
+                }
+            },
+            {
+                header: 'Pacific Highway crossing',
+                subhead: 'Along State Route 543 in Washington and Highway 15 in British Columbia (collectively referred to locally as Pacific Highway). Located about 1 mile (1.6 km) east of the Peace Arch crossing. Commonly known as "the truck crossing," but it can also process passenger vehicles. Open 24/7.',
+                usName: 'Blaine',
+                usCrossing: 'Pacific Highway',
+                usDisplay: 'Entering Blaine, WA',
+                usLat: 49.0020,
+                usLon: -122.7353,
+                canadaFilter: 'Pacific Highway',
+                canadaDisplay: 'Entering Surrey/Douglas/White Rock, BC',
+                canadaLat: 49.0020,
+                canadaLon: -122.7353,
+                showUsCommercial: true,
+                showCanadaCommercial: true,
+                usCamUrl: 'https://www.drivebc.ca/images/15.jpg',
+                usCamCaption: 'U.S.-bound traffic approaching the Pacific Highway crossing',
+                canadaCamUrl: 'https://images.wsdot.wa.gov/nw/543vc00098.jpg',
+                canadaCamCaption: 'Canada-bound traffic approaching the Pacific Highway crossing',
+                wcogIds: {
+                    us: { standard: 3, nexus: 9, commercial: 10 },
+                    canada: { standard: 13, nexus: 14, commercial: 16 }
+                }
+            },
+            {
+                header: 'Lynden crossing',
+                subhead: 'Along State Route 539 (Guide Meridian Road) in Washington and Highway 13 (Diversion Street) in British Columbia. Open 8 a.m. to midnight.',
+                usName: 'Lynden',
+                usCrossing: null,
+                usDisplay: 'Entering Lynden, WA',
+                usLat: 49.0019,
+                usLon: -122.4852,
+                canadaFilter: 'Aldergrove',
+                canadaDisplay: 'Entering Langley Township/Aldergrove, BC',
+                canadaLat: 49.0019,
+                canadaLon: -122.4852,
+                showUsCommercial: true,
+                showCanadaCommercial: true,
+                usCamUrl: 'https://www.drivebc.ca/images/169.jpg',
+                usCamCaption: 'U.S.-bound traffic approaching the Lynden crossing',
+                canadaCamUrl: 'https://images.wsdot.wa.gov/nw/539vc01510.jpg',
+                canadaCamCaption: 'Canada-bound traffic approaching the Lynden crossing',
+                wcogIds: {
+                    us: { standard: 611, nexus: 905, commercial: 749 },
+                    canada: { standard: 12, nexus: 758, commercial: 753 }
+                }
+            },
+            {
+                header: 'Sumas crossing',
+                subhead: 'Along State Route 9 (Cherry Street) in Washington and Highway 11 (Sumas Way) in British Columbia. Open 24/7.',
+                usName: 'Sumas',
+                usCrossing: null,
+                usDisplay: 'Entering Sumas, WA',
+                usLat: 49.0022,
+                usLon: -122.2654,
+                canadaFilter: 'Abbotsford-Huntingdon',
+                canadaDisplay: 'Entering Abbotsford/Huntingdon, BC',
+                canadaLat: 49.0022,
+                canadaLon: -122.2654,
+                showUsCommercial: true,
+                showCanadaCommercial: true,
+                usCamUrl: 'https://www.drivebc.ca/images/170.jpg',
+                usCamCaption: 'U.S.-bound traffic approaching the Sumas crossing',
+                canadaCamUrl: 'https://images.wsdot.wa.gov/nw/009vc09781.jpg',
+                canadaCamCaption: 'Canada-bound traffic approaching the Sumas crossing',
+                wcogIds: {
+                    us: { standard: 610, nexus: 904, commercial: null },
+                    canada: { standard: 15, nexus: 756, commercial: 754 }
+                }
+            },
+            {
+                header: 'Point Roberts crossing',
+                subhead: 'Along Tyee Drive in Point Roberts and 56th Street in Tsawwassen. Open 24/7.',
+                usName: 'Blaine',
+                usCrossing: 'Point Roberts',
+                usDisplay: 'Entering Point Roberts, WA',
+                usLat: 49.0019,
+                usLon: -123.0679,
+                canadaFilter: 'Boundary Bay',
+                canadaDisplay: 'Entering Delta/Tsawwassen, BC',
+                canadaLat: 49.0019,
+                canadaLon: -123.0679,
+                showUsCommercial: true,
+                showCanadaCommercial: true,
+                usCamUrl: null,
+                canadaCamUrl: null,
+                wcogIds: null
+            }
+        ];
+
+        let canadaBound = [];
+        let usBound = [];
+        let weatherData = {};
+        let wcogData = {};
+
+        const WCOG_API_KEY = '269a2097-d8e3-4d1c-8a29-5bfcfa4f50ea';
+
+        function hasCanadaData(port) {
+            if (!port) return false;
+            const hasStandard = port.travellersCanada && 
+                               port.travellersCanada !== 'N/A' && 
+                               port.travellersCanada !== '--' && 
+                               port.travellersCanada !== 'Not Applicable';
+            const hasCommercial = port.commercialCanada && 
+                                 port.commercialCanada !== 'N/A' && 
+                                 port.commercialCanada !== '--' && 
+                                 port.commercialCanada !== 'Not Applicable';
+            return hasStandard || hasCommercial;
+        }
+
+        function parseWaitTime(time) {
+            if (!time || time === 'N/A' || time === '--' || time === 'Not Applicable') return -1;
+            if (time === 'No Delay' || time === 'no delay' || time === '0') return 0;
+            
+            const hourMatch = time.match(/(\d+)\s*(?:hour|hr|h)(?!:)/i);
+            const minuteMatch = time.match(/(\d+)\s*(?:minute|min|m)(?!onth)/i);
+            
+            let totalMinutes = 0;
+            
+            if (hourMatch) {
+                totalMinutes += parseInt(hourMatch[1]) * 60;
+            }
+            
+            if (minuteMatch) {
+                totalMinutes += parseInt(minuteMatch[1]);
+            }
+            
+            // If we found hours or minutes, return the total
+            if (hourMatch || minuteMatch) {
+                return totalMinutes;
+            }
+            
+            // Otherwise try to parse as a plain number
+            const numericMatch = time.match(/(\d+)/);
+            if (numericMatch) {
+                return parseInt(numericMatch[1]);
+            }
+            
+            return -1;
+        }
+
+        function formatWaitTime(time) {
+            const minutes = parseWaitTime(time);
+            if (minutes === -1) return 'N/A';
+            if (minutes === 0) return 'No delay';
+            if (minutes >= 60) {
+                const hours = Math.floor(minutes / 60);
+                const mins = minutes % 60;
+                if (mins === 0) {
+                    return `${hours} ${hours === 1 ? 'hour' : 'hours'}`;
+                }
+                return `${hours} ${hours === 1 ? 'hour' : 'hours'} ${mins} min`;
+            }
+            return `${minutes} min`;
+        }
+
+        function getDelayColor(time) {
+            const minutes = parseWaitTime(time);
+            if (minutes === -1) return 'wait-gray';
+            if (minutes === 0) return 'wait-green';
+            if (minutes <= 15) return 'wait-green';
+            if (minutes <= 30) return 'wait-yellow';
+            return 'wait-red';
+        }
+
+        function getWeatherEmoji(code) {
+            if (code === 0) return '☀️';
+            if (code === 1 || code === 2) return '🌤️';
+            if (code === 3) return '☁️';
+            if (code >= 45 && code <= 48) return '🌫️';
+            if (code >= 51 && code <= 67) return '🌧️';
+            if (code >= 71 && code <= 77) return '❄️';
+            if (code >= 80 && code <= 82) return '🌧️';
+            if (code >= 85 && code <= 86) return '❄️';
+            if (code >= 95) return '⛈️';
+            return '🌤️';
+        }
+
+        function getWeatherDescription(code) {
+            if (code === 0) return 'Clear sky';
+            if (code === 1) return 'Mainly clear';
+            if (code === 2) return 'Partly cloudy';
+            if (code === 3) return 'Overcast';
+            if (code >= 45 && code <= 48) return 'Foggy';
+            if (code >= 51 && code <= 55) return 'Drizzle';
+            if (code >= 56 && code <= 57) return 'Freezing drizzle';
+            if (code >= 61 && code <= 65) return 'Rain';
+            if (code >= 66 && code <= 67) return 'Freezing rain';
+            if (code >= 71 && code <= 75) return 'Snow';
+            if (code >= 77) return 'Snow grains';
+            if (code >= 80 && code <= 82) return 'Rain showers';
+            if (code >= 85 && code <= 86) return 'Snow showers';
+            if (code >= 95) return 'Thunderstorm';
+            return 'Partly cloudy';
+        }
+
+        async function fetchWeather() {
+            try {
+                const weatherPromises = CROSSING_PAIRS.map(async pair => {
+                    const usUrl = `https://api.open-meteo.com/v1/forecast?latitude=${pair.usLat}&longitude=${pair.usLon}&current=temperature_2m,weather_code&temperature_unit=fahrenheit&timezone=America/Los_Angeles`;
+                    const usResponse = await fetch(usUrl);
+                    const usData = await usResponse.json();
+
+                    const canadaUrl = `https://api.open-meteo.com/v1/forecast?latitude=${pair.canadaLat}&longitude=${pair.canadaLon}&current=temperature_2m,weather_code&temperature_unit=celsius&timezone=America/Vancouver`;
+                    const canadaResponse = await fetch(canadaUrl);
+                    const canadaData = await canadaResponse.json();
+
+                    return {
+                        pairIndex: CROSSING_PAIRS.indexOf(pair),
+                        us: {
+                            temp: Math.round(usData.current.temperature_2m),
+                            code: usData.current.weather_code
+                        },
+                        canada: {
+                            temp: Math.round(canadaData.current.temperature_2m),
+                            code: canadaData.current.weather_code
+                        }
+                    };
+                });
+
+                const results = await Promise.all(weatherPromises);
+                results.forEach(result => {
+                    weatherData[result.pairIndex] = result;
+                });
+            } catch (error) {
+                console.error('Error fetching weather:', error);
+            }
+        }
+
+        async function fetchWCOGData() {
+            try {
+                const wcogPromises = [];
+                
+                CROSSING_PAIRS.forEach((pair, pairIndex) => {
+                    if (!pair.wcogIds) return;
+                    
+                    // US-bound queries
+                    if (pair.wcogIds.us) {
+                        if (pair.wcogIds.us.standard) {
+                            wcogPromises.push(
+                                fetch(`/.netlify/functions/border-data?url=${encodeURIComponent(`https://www.cascadegatewaydata.com/CrossingLane/CurrentDelay/${pair.wcogIds.us.standard}?format=json&key=${WCOG_API_KEY}`)}`)
+                                    .then(r => r.json())
+                                    .then(data => ({ pairIndex, direction: 'us', type: 'standard', data }))
+                            );
+                        }
+                        if (pair.wcogIds.us.nexus) {
+                            wcogPromises.push(
+                                fetch(`/.netlify/functions/border-data?url=${encodeURIComponent(`https://www.cascadegatewaydata.com/CrossingLane/CurrentDelay/${pair.wcogIds.us.nexus}?format=json&key=${WCOG_API_KEY}`)}`)
+                                    .then(r => r.json())
+                                    .then(data => ({ pairIndex, direction: 'us', type: 'nexus', data }))
+                            );
+                        }
+                        if (pair.wcogIds.us.commercial) {
+                            wcogPromises.push(
+                                fetch(`/.netlify/functions/border-data?url=${encodeURIComponent(`https://www.cascadegatewaydata.com/CrossingLane/CurrentDelay/${pair.wcogIds.us.commercial}?format=json&key=${WCOG_API_KEY}`)}`)
+                                    .then(r => r.json())
+                                    .then(data => ({ pairIndex, direction: 'us', type: 'commercial', data }))
+                            );
+                        }
+                    }
+                    
+                    // Canada-bound queries
+                    if (pair.wcogIds.canada) {
+                        if (pair.wcogIds.canada.standard) {
+                            wcogPromises.push(
+                                fetch(`/.netlify/functions/border-data?url=${encodeURIComponent(`https://www.cascadegatewaydata.com/CrossingLane/CurrentDelay/${pair.wcogIds.canada.standard}?format=json&key=${WCOG_API_KEY}`)}`)
+                                    .then(r => r.json())
+                                    .then(data => ({ pairIndex, direction: 'canada', type: 'standard', data }))
+                            );
+                        }
+                        if (pair.wcogIds.canada.nexus) {
+                            wcogPromises.push(
+                                fetch(`/.netlify/functions/border-data?url=${encodeURIComponent(`https://www.cascadegatewaydata.com/CrossingLane/CurrentDelay/${pair.wcogIds.canada.nexus}?format=json&key=${WCOG_API_KEY}`)}`)
+                                    .then(r => r.json())
+                                    .then(data => ({ pairIndex, direction: 'canada', type: 'nexus', data }))
+                            );
+                        }
+                        if (pair.wcogIds.canada.commercial) {
+                            wcogPromises.push(
+                                fetch(`/.netlify/functions/border-data?url=${encodeURIComponent(`https://www.cascadegatewaydata.com/CrossingLane/CurrentDelay/${pair.wcogIds.canada.commercial}?format=json&key=${WCOG_API_KEY}`)}`)
+                                    .then(r => r.json())
+                                    .then(data => ({ pairIndex, direction: 'canada', type: 'commercial', data }))
+                            );
+                        }
+                    }
+                });
+
+                const results = await Promise.all(wcogPromises);
+                
+                // Organize WCOG data
+                results.forEach(result => {
+                    if (!wcogData[result.pairIndex]) {
+                        wcogData[result.pairIndex] = { us: {}, canada: {} };
+                    }
+                    
+                    // Parse the Values field
+                    let delay = 'N/A';
+                    if (result.data && result.data.Values && result.data.Values[0]) {
+                        const value = result.data.Values[0][0];
+                        if (value === null) {
+                            delay = 'N/A';
+                        } else if (value === 0) {
+                            delay = 'No delay';
+                        } else {
+                            delay = `${value} min`;
+                        }
+                    }
+                    
+                    wcogData[result.pairIndex][result.direction][result.type] = delay;
+                });
+            } catch (error) {
+                console.error('Error fetching WCOG data:', error);
+            }
+        }
+
+        function getWCOGDelay(pairIndex, direction, type) {
+            if (wcogData[pairIndex] && wcogData[pairIndex][direction] && wcogData[pairIndex][direction][type]) {
+                return wcogData[pairIndex][direction][type];
+            }
+            return 'N/A';
+        }
+
+        function findUSPort(pair) {
+            return usBound.find(port => {
+                const nameMatch = port.name === pair.usName;
+                const crossingMatch = pair.usCrossing ? port.crossing === pair.usCrossing : true;
+                return nameMatch && crossingMatch;
+            });
+        }
+
+        function findCanadaPort(pair) {
+            return canadaBound.find(port => 
+                port.office && port.office.includes(pair.canadaFilter)
+            );
+        }
+
+        function renderUSCard(port, pair, pairIndex) {
+            const timestamp = new Date().getTime();
+            const isPointRoberts = pair.header === 'Point Roberts crossing';
+            const captionAlign = isPointRoberts ? 'text-left' : 'text-center';
+            
+            const trafficCamHtml = pair.usCamUrl 
+                ? `
+                    <div class="mt-4">
+                        <div class="traffic-cam-container rounded-xl border-2 border-white border-opacity-10">
+                            <img src="${pair.usCamUrl}?t=${timestamp}" alt="Traffic camera" onerror="this.style.display='none'">
+                        </div>
+                        <p class="text-xs opacity-60 mt-2 ${captionAlign}">${pair.usCamCaption}</p>
+                    </div>
+                `
+                : `<p class="text-xs opacity-60 mt-4 text-left">${isPointRoberts ? 'No WCOG road sensors at the Point Roberts crossing<br>No traffic cams posted at the Point Roberts crossing' : ''}</p>`;
+
+            if (!port) {
+                return `
+                    <div class="wait-card p-6">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <img src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/svg/1f1fa-1f1f8.svg" 
+                                         width="20" height="20" alt="US Flag" class="inline-block">
+                                    <h3 class="font-bold text-lg">${pair.usDisplay}</h3>
+                                </div>
+                                ${weatherData[pairIndex] ? `
+                                <div class="flex items-center gap-2 text-xs opacity-80 ml-7">
+                                    <span class="text-lg">${getWeatherEmoji(weatherData[pairIndex].us.code)}</span>
+                                    <span class="font-semibold">${weatherData[pairIndex].us.temp}°F</span>
+                                    <span class="opacity-40">•</span>
+                                    <span>${getWeatherDescription(weatherData[pairIndex].us.code)}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                            <span class="status-badge opacity-50">
+                                No data
+                            </span>
+                        </div>
+                        <p class="text-sm opacity-60">Wait time data unavailable</p>
+                        ${trafficCamHtml}
+                    </div>
+                `;
+            }
+
+            const isOpen = port.status === 'Open';
+            const hasWCOG = !isPointRoberts;
+            
+            return `
+                <div class="wait-card p-6">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-2">
+                                <img src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/svg/1f1fa-1f1f8.svg" 
+                                     width="20" height="20" alt="US Flag" class="inline-block">
+                                <h3 class="font-bold text-lg">${pair.usDisplay}</h3>
+                            </div>
+                            ${weatherData[pairIndex] ? `
+                            <div class="flex items-center gap-2 text-xs opacity-80 ml-7">
+                                <span class="text-lg">${getWeatherEmoji(weatherData[pairIndex].us.code)}</span>
+                                <span class="font-semibold">${weatherData[pairIndex].us.temp}°F</span>
+                                <span class="opacity-40">•</span>
+                                <span>${getWeatherDescription(weatherData[pairIndex].us.code)}</span>
+                            </div>
+                            ` : ''}
+                        </div>
+                        <span class="status-badge ${isOpen ? 'status-open' : 'status-closed'}">
+                            ${port.status}
+                        </span>
+                    </div>
+                    
+                    <div class="grid ${pair.showUsCommercial ? 'grid-cols-3' : 'grid-cols-2'} gap-4 text-sm mb-4">
+                        <div class="flex flex-col gap-2">
+                            <p class="wait-label">Standard</p>
+                            ${hasWCOG ? `
+                            <div class="flex items-center gap-2">
+                                <span class="wait-value ${getDelayColor(getWCOGDelay(pairIndex, 'us', 'standard'))}">
+                                    ${formatWaitTime(getWCOGDelay(pairIndex, 'us', 'standard'))}
+                                </span>
+                                <span class="source-label">WCOG</span>
+                            </div>
+                            ` : ''}
+                            <div class="flex items-center gap-2">
+                                <span class="wait-value ${getDelayColor(port.passengerDelay)}">
+                                    ${formatWaitTime(port.passengerDelay)}
+                                </span>
+                                <span class="source-label">CBP</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <p class="wait-label">NEXUS</p>
+                            ${hasWCOG ? `
+                            <div class="flex items-center gap-2">
+                                <span class="wait-value ${getDelayColor(getWCOGDelay(pairIndex, 'us', 'nexus'))}">
+                                    ${formatWaitTime(getWCOGDelay(pairIndex, 'us', 'nexus'))}
+                                </span>
+                                <span class="source-label">WCOG</span>
+                            </div>
+                            ` : ''}
+                            <div class="flex items-center gap-2">
+                                <span class="wait-value ${getDelayColor(port.nexusDelay)}">
+                                    ${formatWaitTime(port.nexusDelay)}
+                                </span>
+                                <span class="source-label">CBP</span>
+                            </div>
+                        </div>
+                        ${pair.showUsCommercial ? `
+                        <div class="flex flex-col gap-2">
+                            <p class="wait-label">Commercial</p>
+                            ${hasWCOG ? `
+                            <div class="flex items-center gap-2">
+                                <span class="wait-value ${getDelayColor(getWCOGDelay(pairIndex, 'us', 'commercial'))}">
+                                    ${formatWaitTime(getWCOGDelay(pairIndex, 'us', 'commercial'))}
+                                </span>
+                                <span class="source-label">WCOG</span>
+                            </div>
+                            ` : ''}
+                            <div class="flex items-center gap-2">
+                                <span class="wait-value ${getDelayColor(port.commercialDelay)}">
+                                    ${formatWaitTime(port.commercialDelay)}
+                                </span>
+                                <span class="source-label">CBP</span>
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>
+                    ${trafficCamHtml}
+                </div>
+            `;
+        }
+
+        function renderCanadaCard(port, pair, pairIndex) {
+            const timestamp = new Date().getTime();
+            const isPointRoberts = pair.header === 'Point Roberts crossing';
+            const captionAlign = isPointRoberts ? 'text-left' : 'text-center';
+            
+            const trafficCamHtml = pair.canadaCamUrl 
+                ? `
+                    <div class="mt-4">
+                        <div class="traffic-cam-container rounded-xl border-2 border-white border-opacity-10">
+                            <img src="${pair.canadaCamUrl}?t=${timestamp}" alt="Traffic camera" onerror="this.style.display='none'">
+                        </div>
+                        <p class="text-xs opacity-60 mt-2 ${captionAlign}">${pair.canadaCamCaption}</p>
+                    </div>
+                `
+                : `<p class="text-xs opacity-60 mt-4 text-left">${isPointRoberts ? 'No WCOG road sensors at the Point Roberts crossing<br>No traffic cams posted at the Point Roberts crossing' : ''}</p>`;
+
+            if (!port || !hasCanadaData(port)) {
+                return `
+                    <div class="wait-card p-6">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <img src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/svg/1f1e8-1f1e6.svg" 
+                                         width="20" height="20" alt="Canada Flag" class="inline-block">
+                                    <h3 class="font-bold text-lg">${pair.canadaDisplay}</h3>
+                                </div>
+                                ${weatherData[pairIndex] ? `
+                                <div class="flex items-center gap-2 text-xs opacity-80 ml-7">
+                                    <span class="text-lg">${getWeatherEmoji(weatherData[pairIndex].canada.code)}</span>
+                                    <span class="font-semibold">${weatherData[pairIndex].canada.temp}°C</span>
+                                    <span class="opacity-40">•</span>
+                                    <span>${getWeatherDescription(weatherData[pairIndex].canada.code)}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                            <span class="status-badge opacity-50">
+                                No data
+                            </span>
+                        </div>
+                        <p class="text-sm opacity-60">Wait time data unavailable</p>
+                        ${trafficCamHtml}
+                    </div>
+                `;
+            }
+            
+            const hasWCOG = !isPointRoberts;
+            
+            return `
+                <div class="wait-card p-6">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-2">
+                                <img src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/svg/1f1e8-1f1e6.svg" 
+                                     width="20" height="20" alt="Canada Flag" class="inline-block">
+                                <h3 class="font-bold text-lg">${pair.canadaDisplay}</h3>
+                            </div>
+                            ${weatherData[pairIndex] ? `
+                            <div class="flex items-center gap-2 text-xs opacity-80 ml-7">
+                                <span class="text-lg">${getWeatherEmoji(weatherData[pairIndex].canada.code)}</span>
+                                <span class="font-semibold">${weatherData[pairIndex].canada.temp}°C</span>
+                                <span class="opacity-40">•</span>
+                                <span>${getWeatherDescription(weatherData[pairIndex].canada.code)}</span>
+                            </div>
+                            ` : ''}
+                        </div>
+                        <span class="status-badge status-open">
+                            Open
+                        </span>
+                    </div>
+                    
+                    <div class="grid ${pair.showCanadaCommercial ? 'grid-cols-3' : 'grid-cols-2'} gap-4 text-sm mb-4">
+                        <div class="flex flex-col gap-2">
+                            <p class="wait-label">Standard</p>
+                            ${hasWCOG ? `
+                            <div class="flex items-center gap-2">
+                                <span class="wait-value ${getDelayColor(getWCOGDelay(pairIndex, 'canada', 'standard'))}">
+                                    ${formatWaitTime(getWCOGDelay(pairIndex, 'canada', 'standard'))}
+                                </span>
+                                <span class="source-label">WCOG</span>
+                            </div>
+                            ` : ''}
+                            <div class="flex items-center gap-2">
+                                <span class="wait-value ${getDelayColor(port.travellersCanada)}">
+                                    ${formatWaitTime(port.travellersCanada)}
+                                </span>
+                                <span class="source-label">CBSA</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <p class="wait-label">NEXUS</p>
+                            ${hasWCOG ? `
+                            <div class="flex items-center gap-2">
+                                <span class="wait-value ${getDelayColor(getWCOGDelay(pairIndex, 'canada', 'nexus'))}">
+                                    ${formatWaitTime(getWCOGDelay(pairIndex, 'canada', 'nexus'))}
+                                </span>
+                                <span class="source-label">WCOG</span>
+                            </div>
+                            ` : ''}
+                            <div class="flex items-center gap-2">
+                                <span class="wait-value wait-gray">
+                                    N/A
+                                </span>
+                                <span class="source-label">CBSA</span>
+                            </div>
+                        </div>
+                        ${pair.showCanadaCommercial ? `
+                        <div class="flex flex-col gap-2">
+                            <p class="wait-label">Commercial</p>
+                            ${hasWCOG ? `
+                            <div class="flex items-center gap-2">
+                                <span class="wait-value ${getDelayColor(getWCOGDelay(pairIndex, 'canada', 'commercial'))}">
+                                    ${formatWaitTime(getWCOGDelay(pairIndex, 'canada', 'commercial'))}
+                                </span>
+                                <span class="source-label">WCOG</span>
+                            </div>
+                            ` : ''}
+                            <div class="flex items-center gap-2">
+                                <span class="wait-value ${getDelayColor(port.commercialCanada)}">
+                                    ${formatWaitTime(port.commercialCanada)}
+                                </span>
+                                <span class="source-label">CBSA</span>
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>
+                    ${trafficCamHtml}
+                </div>
+            `;
+        }
+
+        function renderData() {
+            const content = document.getElementById('content');
+            const noteSection = document.getElementById('noteSection');
+            
+            content.innerHTML = CROSSING_PAIRS.map((pair, index) => {
+                const usPort = findUSPort(pair);
+                const canadaPort = findCanadaPort(pair);
+                
+                return `
+                    <div>
+                        <div class="crossing-header mb-5 text-center">
+                            <h2 class="text-2xl font-bold mb-2">${pair.header}</h2>
+                            <p class="text-sm opacity-85 leading-relaxed">${pair.subhead}</p>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-4 mb-8">
+                            ${renderUSCard(usPort, pair, index)}
+                            ${renderCanadaCard(canadaPort, pair, index)}
+                        </div>
+                        ${index < CROSSING_PAIRS.length - 1 ? '<div class="divider my-8"></div>' : '<div class="divider my-8"></div>'}
+                    </div>
+                `;
+            }).join('');
+            
+            noteSection.classList.remove('hidden');
+        }
+
+        async function fetchData() {
+            const refreshIcon = document.getElementById('refreshIcon');
+            const loadingState = document.getElementById('loadingState');
+            const content = document.getElementById('content');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            refreshIcon.classList.add('animate-spin');
+            errorMessage.classList.add('hidden');
+
+            try {
+                // Fetch all data in parallel
+                await Promise.all([
+                    fetchWeather(),
+                    fetchWCOGData(),
+                    (async () => {
+                        const cbsaUrl = encodeURIComponent('https://www.cbsa-asfc.gc.ca/bwt-taf/bwt-eng.csv');
+                        const cbsaRes = await fetch(`/.netlify/functions/border-data?url=${cbsaUrl}`);
+                        
+                        if (!cbsaRes.ok) throw new Error('Failed to fetch Canadian data');
+                        
+                        const cbsaText = await cbsaRes.text();
+                        const cbsaLines = cbsaText.split('\n').slice(1).filter(line => line.trim());
+                        
+                        canadaBound = cbsaLines.map(line => {
+                            const parts = line.split(';;').map(p => p.trim());
+                            return {
+                                office: parts[0],
+                                location: parts[1],
+                                updated: parts[2],
+                                commercialCanada: parts[3],
+                                commercialUS: parts[4],
+                                travellersCanada: parts[5],
+                                travellersUS: parts[6],
+                            };
+                        });
+                    })(),
+                    (async () => {
+                        const cbpUrl = encodeURIComponent('https://bwt.cbp.gov/xml/bwt.xml');
+                        const cbpRes = await fetch(`/.netlify/functions/border-data?url=${cbpUrl}`);
+                        
+                        if (!cbpRes.ok) throw new Error('Failed to fetch U.S. data');
+                        
+                        const cbpText = await cbpRes.text();
+                        const parser = new DOMParser();
+                        const xml = parser.parseFromString(cbpText, 'text/xml');
+                        
+                        const ports = Array.from(xml.querySelectorAll('port'));
+                        usBound = ports
+                            .filter(port => port.querySelector('border')?.textContent === 'Canadian Border')
+                            .map(port => {
+                                const getDelay = (selector) => {
+                                    const elem = port.querySelector(selector);
+                                    return elem?.textContent || 'N/A';
+                                };
+                                
+                                return {
+                                    name: port.querySelector('port_name')?.textContent,
+                                    crossing: port.querySelector('crossing_name')?.textContent,
+                                    updated: port.querySelector('date')?.textContent,
+                                    status: port.querySelector('port_status')?.textContent,
+                                    commercialDelay: getDelay('commercial_vehicle_lanes standard_lanes delay_minutes'),
+                                    passengerDelay: getDelay('passenger_vehicle_lanes standard_lanes delay_minutes'),
+                                    nexusDelay: getDelay('passenger_vehicle_lanes NEXUS_SENTRI_lanes delay_minutes'),
+                                };
+                            });
+                    })()
+                ]);
+
+                loadingState.classList.add('hidden');
+                content.classList.remove('hidden');
+                
+                const lastUpdate = document.getElementById('lastUpdate');
+                const updateTime = document.getElementById('updateTime');
+                lastUpdate.classList.remove('hidden');
+                updateTime.textContent = new Date().toLocaleTimeString();
+
+                renderData();
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                loadingState.classList.add('hidden');
+                errorMessage.classList.remove('hidden');
+                document.getElementById('errorText').textContent = error.message;
+            } finally {
+                refreshIcon.classList.remove('animate-spin');
+            }
+        }
+
+        fetchData();
+        setInterval(fetchData, 300000);
+    </script>
+</body>
+</html>
