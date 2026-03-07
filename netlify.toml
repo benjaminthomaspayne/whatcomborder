@@ -7,3 +7,9 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+[[redirects]]
+  from = "https://borderbug.netlify.app/*"
+  to = "https://borderbug.com/:splat"
+  status = 301
+  force = true
