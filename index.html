@@ -45,6 +45,59 @@
             border: 2px solid rgba(255, 255, 255, 0.12);
             border-radius: 20px;
             backdrop-filter: blur(10px);
+            padding: 48px 40px 40px 40px;
+            text-align: center;
+        }
+
+        .emojis {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 28px;
+            font-size: 40px;
+            line-height: 1;
+        }
+
+        .emojis img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .title-text {
+            font-size: 30px;
+            font-weight: 700;
+            margin: 0 0 20px 0;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            opacity: 0.85;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .crossing-quick-links {
+            font-size: 14px;
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+
+        .crossing-quick-links a {
+            color: #fbbf24;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .crossing-quick-links a:hover {
+            text-decoration: underline;
+            opacity: 0.8;
+        }
+
+        .bullet {
+            opacity: 0.5;
+            margin: 0 8px;
         }
 
         .refresh-btn {
@@ -69,15 +122,90 @@
             box-shadow: 0 6px 16px rgba(251, 191, 36, 0.4);
         }
 
+        .last-update-display {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .how-it-works-link {
+            margin-top: 16px;
+            font-size: 14px;
+        }
+
+        .how-it-works-link a {
+            color: #fbbf24;
+            text-decoration: underline;
+        }
+
         .note-section {
             background: rgba(251, 191, 36, 0.15);
             border: 2px solid rgba(251, 191, 36, 0.3);
             border-radius: 16px;
             backdrop-filter: blur(10px);
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+            line-height: 1.6;
         }
 
         .note-section strong {
             color: #fbbf24;
+        }
+
+        .note-text {
+            margin-bottom: 0;
+        }
+
+        .legend-header {
+            margin-top: 20px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #fbbf24;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .legend {
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .source-logo-legend {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+            vertical-align: middle;
+        }
+
+        .equals {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .legend-text {
+            text-align: left;
+        }
+
+        .legend-note {
+            font-size: 12px;
+            font-style: italic;
+            opacity: 0.8;
+            margin-top: 16px;
         }
 
         .divider {
@@ -125,15 +253,16 @@
         }
 
         .wait-label {
-            font-size: 11px;
+            font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 0.1em;
             opacity: 0.6;
             font-weight: 700;
+            text-decoration: underline;
         }
 
         .wait-value {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 700;
         }
 
@@ -142,13 +271,8 @@
         .wait-red { color: #f87171; }
         .wait-gray { color: #9ca3af; }
 
-        .source-label {
-            font-size: 11px;
-            opacity: 0.6;
-        }
-
         .source-logo {
-            height: 28px;
+            height: 40px;
             width: auto;
             object-fit: contain;
             vertical-align: middle;
@@ -215,14 +339,23 @@
 <body class="p-4">
     <div class="max-w-6xl mx-auto" id="top">
         <!-- Header -->
-        <div class="title-card p-8 mb-6">
-            <h1 class="text-3xl font-bold mb-3" style="letter-spacing: -0.02em;">
-                BorderBug: Whatcom County - British Columbia border crossing tracker
-            </h1>
-            <p class="opacity-85 mb-5 leading-relaxed">A free and simple tool to track all of Whatcom County, Washington's border crossing wait times — in both directions 
-                <img src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/svg/1f1fa-1f1f8.svg" width="16" height="16" alt="US Flag" class="inline-block">
-                <img src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/svg/1f1e8-1f1e6.svg" width="16" height="16" alt="Canada Flag" class="inline-block">
+        <div class="title-card mb-6">
+            <div class="emojis">
+                <img src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/svg/1f1fa-1f1f8.svg" alt="US Flag">
+                <span>🐞</span>
+                <img src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/svg/1f1e8-1f1e6.svg" alt="Canada Flag">
+            </div>
+
+            <h1 class="title-text">BorderBug: Whatcom County - British Columbia border crossing tracker</h1>
+            
+            <p class="subtitle">
+                A free tool to check border crossing wait times, weather, and traffic cams along the U.S.-Canada border between Whatcom County, Washington and the Lower Mainland of British Columbia — in both directions of travel
             </p>
+
+            <div class="crossing-quick-links">
+                <a href="#peace-arch">Peace Arch</a><span class="bullet">•</span><a href="#pacific-highway">Pacific Highway</a><span class="bullet">•</span><a href="#lynden">Lynden</a><span class="bullet">•</span><a href="#sumas">Sumas</a><span class="bullet">•</span><a href="#point-roberts">Point Roberts</a>
+            </div>
+
             <button onclick="fetchData()" id="refreshBtn" class="refresh-btn">
                 <svg id="refreshIcon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
@@ -230,7 +363,7 @@
                 Refresh
             </button>
             
-            <div id="lastUpdate" class="hidden mt-4 flex items-center gap-2 text-sm opacity-70">
+            <div id="lastUpdate" class="hidden last-update-display">
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
@@ -242,8 +375,8 @@
                 <p class="text-sm mt-1 opacity-80" id="errorText"></p>
             </div>
 
-            <p class="mt-5 text-sm">
-                <a href="#how-it-works" style="color: #fbbf24; text-decoration: underline;">How it works</a>
+            <p class="how-it-works-link">
+                <a href="#how-it-works">How it works</a>
             </p>
         </div>
 
@@ -256,10 +389,35 @@
         </div>
 
         <!-- NOTE Section -->
-        <div id="noteSection" class="hidden note-section p-5 mb-8 text-center text-sm leading-relaxed">
-            <strong>NOTE:</strong> To give users a more complete picture of conditions at the border, this dashboard shows wait times from multiple sources: road sensor data from the Whatcom Council of Governments (a regional transportation planning agency) and estimates from U.S. Customs and Border Protection (U.S.-bound traffic only) and the Canada Border Services Agency (Canada-bound traffic only).
-            <br><br>
-            Because these are different sources with different methodologies, they often differ in what they report.
+        <div id="noteSection" class="hidden note-section mb-8">
+            <p class="note-text">
+                <strong>NOTE:</strong> To give you a more complete picture of conditions at the border, this dashboard shows wait times from multiple sources: road sensor data from the Whatcom Council of Governments (a regional transportation planning agency) and estimates from U.S. Customs and Border Protection (U.S.-bound traffic only) and the Canada Border Services Agency (Canada-bound traffic only).
+            </p>
+            <p class="note-text" style="margin-top: 12px;">
+                Since these are different sources with different methodologies, they often differ in what they report.
+            </p>
+
+            <p class="legend-header">Data source key</p>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <img src="/wcog.png" alt="WCOG" class="source-logo-legend">
+                    <span class="equals">=</span>
+                    <div class="legend-text">Whatcom Council of Governments</div>
+                </div>
+                <div class="legend-item">
+                    <img src="/cbp.svg" alt="CBP" class="source-logo-legend">
+                    <span class="equals">=</span>
+                    <div class="legend-text">U.S. Customs and Border Protection</div>
+                </div>
+                <div class="legend-item">
+                    <img src="/cbsa.png" alt="CBSA" class="source-logo-legend">
+                    <span class="equals">=</span>
+                    <div class="legend-text">Canada Border Services Agency</div>
+                </div>
+            </div>
+
+            <p class="legend-note">N/A indicates data is not currently available from that source.</p>
         </div>
 
         <!-- Content - Paired Crossings -->
@@ -284,7 +442,7 @@
                     (after all, this is the Pacific Northwest ☕)
                 </p>
                 <p>
-                    If you have any suggestions on how this tool could be improved, please feel free to <a href="/cdn-cgi/l/email-protection#7b191e15111a1612150f1314161a080b1a02151e3b1c161a121755181416">email me here</a>. I enjoy tinkering with the code to improve the app's look, feel, and functionality.
+                    If you have any suggestions on how this tool could be improved, please feel free to <a href="mailto:benjaminthomaspayne@gmail.com">email me here</a>. I enjoy tinkering with the code to improve the app's look, feel, and functionality.
                 </p>
                 <p class="text-center mt-6">
                     <a href="#top">(Back to top)</a>
@@ -305,7 +463,7 @@
         </div>
     </div>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    <script>
         // Crossing pairs configuration
         const CROSSING_PAIRS = [
             {
@@ -329,7 +487,8 @@
                 wcogIds: {
                     us: { standard: 4, nexus: 11 },
                     canada: { standard: 5, nexus: 6 }
-                }
+                },
+                anchorId: 'peace-arch'
             },
             {
                 header: 'Pacific Highway crossing',
@@ -352,7 +511,8 @@
                 wcogIds: {
                     us: { standard: 3, nexus: 9, commercial: 10 },
                     canada: { standard: 13, nexus: 14, commercial: 16 }
-                }
+                },
+                anchorId: 'pacific-highway'
             },
             {
                 header: 'Lynden crossing',
@@ -375,7 +535,8 @@
                 wcogIds: {
                     us: { standard: 611, nexus: 905, commercial: 749 },
                     canada: { standard: 12, nexus: 758, commercial: 753 }
-                }
+                },
+                anchorId: 'lynden'
             },
             {
                 header: 'Sumas crossing',
@@ -398,7 +559,8 @@
                 wcogIds: {
                     us: { standard: 610, nexus: 904, commercial: null },
                     canada: { standard: 15, nexus: 756, commercial: 754 }
-                }
+                },
+                anchorId: 'sumas'
             },
             {
                 header: 'Point Roberts crossing',
@@ -416,7 +578,8 @@
                 showCanadaCommercial: true,
                 usCamUrl: null,
                 canadaCamUrl: null,
-                wcogIds: null
+                wcogIds: null,
+                anchorId: 'point-roberts'
             }
         ];
 
@@ -942,7 +1105,7 @@
                 const canadaPort = findCanadaPort(pair);
                 
                 return `
-                    <div>
+                    <div id="${pair.anchorId}">
                         <div class="crossing-header mb-5 text-center">
                             <h2 class="text-2xl font-bold mb-2">${pair.header}</h2>
                             <p class="text-sm opacity-85 leading-relaxed">${pair.subhead}</p>
