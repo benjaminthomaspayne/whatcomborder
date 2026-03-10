@@ -15,17 +15,17 @@
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://borderbug.netlify.app/">
+    <meta property="og:url" content="https://borderbug.com/">
     <meta property="og:title" content="BorderBug | Whatcom County Border Wait Times">
     <meta property="og:description" content="Don't get stuck in traffic. Check live wait times for Peace Arch, Sumas, and more.">
-    <meta property="og:image" content="https://borderbug.netlify.app/og-image.png">
+    <meta property="og:image" content="https://borderbug.com/og-image.png">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://borderbug.netlify.app/">
+    <meta property="twitter:url" content="https://borderbug.com/">
     <meta property="twitter:title" content="BorderBug | Whatcom County Border Wait Times">
     <meta property="twitter:description" content="Don't get stuck in traffic. Check live wait times for Peace Arch, Sumas, and more.">
-    <meta property="twitter:image" content="https://borderbug.netlify.app/og-image.png">
+    <meta property="twitter:image" content="https://borderbug.com/og-image.png">
     
     <!-- Tailwind CSS - Production build -->
     <link rel="stylesheet" href="/dist/output.css">
@@ -98,6 +98,13 @@
         .bullet {
             opacity: 0.5;
             margin: 0 8px;
+        }
+
+        /* Mobile: smaller font for crossing links */
+        @media (max-width: 640px) {
+            .crossing-quick-links {
+                font-size: 12px;
+            }
         }
 
         .refresh-btn {
@@ -179,6 +186,15 @@
             align-items: center;
         }
 
+        /* Desktop: horizontal layout for legend */
+        @media (min-width: 768px) {
+            .legend {
+                flex-direction: row;
+                justify-content: center;
+                gap: 24px;
+            }
+        }
+
         .legend-item {
             display: flex;
             align-items: center;
@@ -213,10 +229,47 @@
             background: rgba(251, 191, 36, 0.5);
         }
 
+        /* Melting header design */
+        .crossing-section {
+            margin-bottom: 32px;
+        }
+
+        .crossing-header {
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.12);
+            border-bottom: none;
+            border-radius: 20px 20px 0 0;
+            backdrop-filter: blur(10px);
+            padding: 24px;
+            text-align: center;
+        }
+
         .crossing-header h2 {
             color: #fbbf24;
             text-decoration: underline;
             text-underline-offset: 4px;
+            margin: 0 0 12px 0;
+            font-size: 24px;
+        }
+
+        .crossing-header p {
+            margin: 0;
+            font-size: 14px;
+            opacity: 0.85;
+            line-height: 1.6;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+
+        /* Mobile: stack cards vertically */
+        @media (max-width: 768px) {
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
         }
 
         .crossing-header a {
@@ -227,8 +280,35 @@
         .wait-card {
             background: rgba(255, 255, 255, 0.06);
             border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
+            border-top: none;
             backdrop-filter: blur(10px);
+            padding: 24px;
+        }
+
+        /* Desktop: side-by-side cards with melting effect */
+        @media (min-width: 769px) {
+            .wait-card:first-child {
+                border-right: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 0 0 0 20px;
+            }
+
+            .wait-card:last-child {
+                border-left: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 0 0 20px 0;
+            }
+        }
+
+        /* Mobile: stacked cards with melting effect */
+        @media (max-width: 768px) {
+            .wait-card:first-child {
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 0;
+            }
+
+            .wait-card:last-child {
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 0 0 20px 20px;
+            }
         }
 
         .status-badge {
@@ -430,7 +510,7 @@
             <h2 class="text-3xl font-bold mb-5">How it works</h2>
             <div class="opacity-90 space-y-4 leading-relaxed">
                 <p>
-                    My name is Benjamin Payne, and I live in Bellingham, Washington. After having moved here in 2025, I realized that there existed no online dashboard to check wait times at all five ports of entry along the U.S.-Canada border in Whatcom County. So, I designed this web app. It retrieves the latest available border crossing wait times, traffic cam images, and weather conditions — from a multitude of otherwise messy government datasets — and presents it all in a clean layout.
+                    My name is Benjamin Payne, and I live in Bellingham, Washington. After having moved here in 2025, I realized that there existed no online dashboard to check wait times at all five ports of entry along the U.S.-Canada border in Whatcom County. So, I made this web app. It retrieves the latest available border crossing wait times, traffic cam images, and weather conditions — from a multitude of otherwise messy government datasets — and presents it all in a clean layout.
                 </p>
                 <p>
                     I will always make sure BorderBug is free, but if you'd like, you can…
@@ -453,7 +533,7 @@
         <!-- Footer -->
         <div class="footer p-6 mt-8 text-center text-sm opacity-80 leading-relaxed">
             <p class="font-semibold mb-3"><strong>Data Sources & Attribution</strong></p>
-            <p class="mb-3">BorderBug designed by <a href="https://btpayne.com/" target="_blank" rel="noopener noreferrer">Benjamin Payne</a>. © 2026</p>
+            <p class="mb-3">BorderBug by <a href="https://btpayne.com/" target="_blank" rel="noopener noreferrer">Benjamin Payne</a>. © 2026</p>
             <p>• Wait time data: Whatcom Council of Governments (WCOG), U.S. Customs and Border Protection (CBP), Canada Border Services Agency (CBSA)</p>
             <p>• Traffic cam images: BC Ministry of Transportation and Transit, Washington State Department of Transportation</p>
             <p class="mb-3">• Weather data: National Oceanic and Atmospheric Administration (NOAA), Environment and Climate Change Canada (Government of Canada) through Open-Meteo.com</p>
@@ -853,7 +933,7 @@
 
             if (!port) {
                 return `
-                    <div class="wait-card p-6">
+                    <div class="wait-card">
                         <div class="flex items-start justify-between mb-4">
                             <div class="flex-1">
                                 <div class="flex items-center gap-2 mb-2">
@@ -884,7 +964,7 @@
             const hasWCOG = !isPointRoberts;
             
             return `
-                <div class="wait-card p-6">
+                <div class="wait-card">
                     <div class="flex items-start justify-between mb-4">
                         <div class="flex-1">
                             <div class="flex items-center gap-2 mb-2">
@@ -984,7 +1064,7 @@
 
             if (!port || !hasCanadaData(port)) {
                 return `
-                    <div class="wait-card p-6">
+                    <div class="wait-card">
                         <div class="flex items-start justify-between mb-4">
                             <div class="flex-1">
                                 <div class="flex items-center gap-2 mb-2">
@@ -1014,7 +1094,7 @@
             const hasWCOG = !isPointRoberts;
             
             return `
-                <div class="wait-card p-6">
+                <div class="wait-card">
                     <div class="flex items-start justify-between mb-4">
                         <div class="flex-1">
                             <div class="flex items-center gap-2 mb-2">
@@ -1105,16 +1185,16 @@
                 const canadaPort = findCanadaPort(pair);
                 
                 return `
-                    <div id="${pair.anchorId}">
-                        <div class="crossing-header mb-5 text-center">
-                            <h2 class="text-2xl font-bold mb-2">${pair.header}</h2>
-                            <p class="text-sm opacity-85 leading-relaxed">${pair.subhead}</p>
+                    <div id="${pair.anchorId}" class="crossing-section">
+                        <div class="crossing-header">
+                            <h2>${pair.header}</h2>
+                            <p>${pair.subhead}</p>
                         </div>
-                        <div class="grid md:grid-cols-2 gap-4 mb-8">
+                        <div class="cards-container">
                             ${renderUSCard(usPort, pair, index)}
                             ${renderCanadaCard(canadaPort, pair, index)}
                         </div>
-                        ${index < CROSSING_PAIRS.length - 1 ? '<div class="divider my-8"></div>' : '<div class="divider my-8"></div>'}
+                        ${index < CROSSING_PAIRS.length - 1 ? '<div class="divider my-8"></div>' : ''}
                     </div>
                 `;
             }).join('');
